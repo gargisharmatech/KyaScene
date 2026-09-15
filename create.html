@@ -1,0 +1,1520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KyaScene | Create Announcement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #E84D2A;
+    --primary-light: #FFF0EC;
+    --primary-hover: #D0401F;
+    --purple: #C5A5D6;
+    --purple-dark: #9A7AB5;
+    --purple-bg: #EDE4F3;
+    --gold: #C0960C;
+    --gold-light: #F5ECD0;
+    --blue-light: #C4DFED;
+    --peach: #F2E3C6;
+    --cream: #F7F0E6;
+    --card-white: #FDFAF4;
+    --text: #4A3F3A;
+    --text-dark: #2A2140;      /* dark navy used for headings in attached page */
+    --muted: #8B7D6B;
+    --border: #E8DFD0;
+    --border-light: #EFE8DB;
+    --shadow: 0 2px 12px rgba(120, 80, 40, 0.05);
+    --shadow-hover: 0 6px 24px rgba(120, 80, 40, 0.10);
+    --radius: 18px;
+    --radius-sm: 12px;
+}
+
+body {
+    font-family: "Inter", "Segoe UI", Arial, sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+button, input, textarea, select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* ========= LAYOUT (no outer border) ========= */
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    background: var(--cream);
+}
+
+/* ========= SIDEBAR ========= */
+
+.sidebar {
+    width: 260px;
+    background: var(--cream);
+    border-right: 1px solid var(--border-light);
+    padding: 30px 22px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    position: relative;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 4px;
+    margin-bottom: 50px;
+}
+
+.brand-icon {
+    font-size: 14px;
+    color: var(--purple-dark);
+}
+
+.brand h2 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-dark);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    line-height: 1.25;
+}
+
+.brand p {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 5px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nav a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 10px;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.nav a:hover,
+.nav a.active {
+    color: var(--primary);
+}
+
+.nav-icon {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+    color: var(--primary);
+    opacity: 0.85;
+}
+
+.sidebar-note {
+    margin: auto 4px 0;
+    padding: 22px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    background: rgba(255, 255, 255, 0.45);
+    line-height: 1.7;
+}
+
+.sidebar-note h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.sidebar-note p {
+    color: var(--muted);
+    font-size: 12.5px;
+}
+
+/* ========= MAIN ========= */
+
+.main {
+    flex: 1;
+    min-width: 0;
+    background: var(--cream);
+}
+
+/* ========= TOPBAR ========= */
+
+.topbar {
+    min-height: 76px;
+    background: var(--cream);
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 30px;
+    gap: 20px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(500px, 55%);
+    padding: 13px 20px;
+    background: var(--card-white);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search span {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.search:focus-within {
+    border-color: var(--purple);
+    box-shadow: 0 0 0 3px rgba(197, 165, 214, 0.15);
+}
+
+.search input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+}
+
+.search input::placeholder {
+    color: #B0A394;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.notif {
+    font-size: 18px;
+    color: var(--purple-dark);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.profile-info {
+    text-align: right;
+}
+
+.profile-info strong {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.profile-block {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), #F07040);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(232, 77, 42, 0.25);
+    order: -1;
+}
+
+.profile-role {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+/* ========= PAGE HEADER ========= */
+
+.content {
+    max-width: 1300px;
+    margin: auto;
+    padding: 28px 42px;
+}
+
+.breadcrumb {
+    color: var(--muted);
+    margin-bottom: 14px;
+    font-size: 13px;
+}
+
+.breadcrumb span {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.page-header h1 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 34px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    color: var(--text-dark);
+    letter-spacing: -0.5px;
+}
+
+.page-header p {
+    color: var(--muted);
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.draft-badge {
+    background: var(--peach);
+    color: #8B6914;
+    padding: 8px 18px;
+    border-radius: 24px;
+    white-space: nowrap;
+    font-weight: 600;
+    font-size: 13px;
+    border: 1px solid rgba(139, 105, 20, 0.12);
+}
+
+/* ========= MAIN GRID ========= */
+
+.create-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.85fr);
+    gap: 25px;
+    align-items: start;
+}
+
+.left-column,
+.right-column {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+/* ========= CARDS ========= */
+
+.card {
+    background: var(--card-white);
+    border: 1.5px solid var(--border-light);
+    border-radius: var(--radius);
+    padding: 26px;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.card-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.heading-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: var(--purple-bg);
+    color: var(--purple-dark);
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+}
+
+.card-heading h2 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text-dark);
+}
+
+.card-heading p {
+    font-size: 12.5px;
+    color: var(--muted);
+}
+
+/* ========= FORM ========= */
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 9px;
+    color: var(--text-dark);
+    font-size: 13.5px;
+}
+
+.required {
+    color: var(--primary);
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    outline: none;
+    background: var(--cream);
+    color: var(--text);
+    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(232, 77, 42, 0.1);
+    background: white;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #B0A394;
+}
+
+select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B7D6B' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.65;
+}
+
+.help-text {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 8px;
+    line-height: 1.5;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* ========= POSTER UPLOAD ========= */
+
+.upload-box {
+    border: 2px dashed #D4C9B8;
+    background: var(--cream);
+    border-radius: var(--radius);
+    padding: 32px 18px;
+    text-align: center;
+    transition: 0.25s;
+}
+
+.upload-box:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+.upload-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 16px;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    margin: 0 auto 14px;
+}
+
+.upload-box h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+.upload-box p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 18px;
+}
+
+.upload-btn {
+    display: inline-block;
+    padding: 11px 22px;
+    border: 1.5px solid var(--primary);
+    border-radius: var(--radius-sm);
+    color: var(--primary);
+    background: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.upload-btn:hover {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(232, 77, 42, 0.25);
+}
+
+#posterInput {
+    display: none;
+}
+
+.poster-preview {
+    display: none;
+    margin-top: 18px;
+    position: relative;
+}
+
+.poster-preview img {
+    max-width: 100%;
+    max-height: 320px;
+    object-fit: contain;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+}
+
+.remove-poster {
+    display: block;
+    margin: 14px auto 0;
+    border: none;
+    background: none;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 13px;
+    transition: color 0.2s;
+}
+
+.remove-poster:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* ========= AI EXTRACTION ========= */
+
+.ai-card {
+    background: var(--blue-light);
+    background: linear-gradient(145deg, #DCEDF6, #E8F2F8);
+    border: 1.5px solid #C8E0EC;
+    border-radius: var(--radius);
+    padding: 24px;
+    box-shadow: var(--shadow);
+}
+
+.ai-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.ai-icon {
+    width: 46px;
+    height: 46px;
+    background: #fff;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 24px;
+    color: var(--gold);
+}
+
+.ai-card h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.ai-card p {
+    color: #5C4E3C;
+    font-size: 13px;
+    line-height: 1.65;
+    margin-bottom: 18px;
+}
+
+.ai-btn {
+    width: 100%;
+    padding: 13px;
+    background: white;
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 14px;
+    transition: all 0.25s;
+}
+
+.ai-btn:hover {
+    background: var(--gold);
+    color: white;
+    box-shadow: 0 4px 14px rgba(192, 150, 12, 0.3);
+}
+
+.ai-result {
+    display: none;
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-top: 16px;
+    color: var(--text);
+    line-height: 1.7;
+    border: 1px solid var(--border-light);
+}
+
+/* ========= PREVIEW ========= */
+
+.preview-poster {
+    width: 100%;
+    min-height: 160px;
+    background: linear-gradient(145deg, var(--purple), var(--purple-dark));
+    color: white;
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    text-align: center;
+    overflow: hidden;
+}
+
+.preview-poster img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    background: white;
+}
+
+.preview-poster strong {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    text-transform: uppercase;
+}
+
+.preview-poster span {
+    font-size: 11px;
+    margin-bottom: 10px;
+    opacity: 0.9;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.preview-content h3 {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin: 18px 0 10px;
+    overflow-wrap: anywhere;
+    color: var(--text-dark);
+}
+
+.preview-content p {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.preview-details {
+    margin-top: 18px;
+    border-top: 1px solid var(--border-light);
+    padding-top: 16px;
+}
+
+.preview-details div {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 13px;
+    color: #5C4E3C;
+    font-size: 13px;
+    align-items: center;
+}
+
+.preview-details div:last-child {
+    margin-bottom: 0;
+}
+
+.preview-details span:first-child {
+    font-size: 16px;
+    opacity: 0.6;
+}
+
+/* ========= BUTTONS ========= */
+
+.actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 28px;
+}
+
+.btn {
+    padding: 14px 24px;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    border: 1.5px solid transparent;
+    font-size: 14px;
+    transition: all 0.25s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary), #F07040);
+    color: white;
+    flex: 1;
+    box-shadow: 0 4px 16px rgba(232, 77, 42, 0.3);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 24px rgba(232, 77, 42, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--text);
+    border-color: var(--border);
+}
+
+.btn-secondary:hover {
+    background: var(--cream);
+    border-color: #D4C9B8;
+}
+
+.footer-note {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 20px;
+}
+
+/* ========= RESPONSIVE ========= */
+
+@media (max-width: 1000px) {
+    .create-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .right-column {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        align-items: start;
+    }
+}
+
+@media (max-width: 700px) {
+    .sidebar {
+        width: 72px;
+        padding: 20px 10px;
+    }
+
+    .brand {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .brand-text,
+    .nav-label,
+    .sidebar-note {
+        display: none;
+    }
+
+    .nav a {
+        justify-content: center;
+        padding: 14px 8px;
+    }
+
+    .topbar {
+        padding: 14px 16px;
+        flex-wrap: wrap;
+    }
+
+    .search {
+        width: 100%;
+        order: 2;
+    }
+
+    .profile {
+        margin-left: auto;
+    }
+
+    .content {
+        padding: 20px 16px;
+    }
+
+    .right-column {
+        display: flex;
+    }
+
+    .card {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        display: none;
+    }
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .page-header h1 {
+        font-size: 26px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .actions {
+        flex-direction: column-reverse;
+    }
+
+    .actions button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <span class="brand-icon">⬤</span>
+
+            <div class="brand-text">
+                <h2>Kya</br>Scene</h2>
+                <p>Organization Portal</p>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="dashboard.html">
+                <span class="nav-icon">⌂</span>
+                <span class="nav-label">Back to Home</span>
+            </a>
+           
+        </nav>
+
+        <div class="sidebar-note">
+            <h3>Creating something great?</h3>
+            <p>Share opportunities. Inspire your campus community.</p>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="search">
+                
+                <input
+                    type="search"
+                    placeholder="Search your announcements..."
+                >
+            </div>
+
+            <div class="profile">
+                <span class="notif" title="Notifications">🔔</span>
+
+                <div class="profile-block">
+                    <div class="avatar">AM</div>
+                    <div class="profile-info">
+                        <strong>Assert Merkle IGDTUW</strong>
+                        <div class="profile-role">Organization</div>
+                    </div>
+                </div>
+            </div>
+
+        </header>
+
+        <div class="content">
+
+            <div class="breadcrumb">
+                Dashboard / <span>Create Announcement</span>
+            </div>
+
+            <div class="page-header">
+                <div>
+                    <h1>Create Announcement</h1>
+                    <p>Share your events, workshops and opportunities with students.</p>
+                </div>
+
+                <span class="draft-badge">✦ New Announcement</span>
+            </div>
+
+            <form id="announcementForm">
+
+                <div class="create-layout">
+
+                    <!-- LEFT COLUMN -->
+                    <div class="left-column">
+
+                        <!-- BASIC INFORMATION -->
+                        <section class="card">
+
+                            <div class="card-heading">
+                                <div class="heading-icon">📋</div>
+
+                                <div>
+                                    <h2>Basic Information</h2>
+                                    <p>Enter the details of your announcement.</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="title">
+                                    Announcement Title <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="title"
+                                    placeholder="e.g. Web Development Workshop"
+                                    required
+                                    maxlength="100"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">
+                                    Description <span class="required">*</span>
+                                </label>
+
+                                <textarea
+                                    id="description"
+                                    placeholder="Describe your event, its purpose, activities and what students can expect..."
+                                    required
+                                ></textarea>
+
+                                <p class="help-text">
+                                    Keep the description clear and informative.
+                                </p>
+                            </div>
+
+                            <div class="form-row">
+
+                                <div class="form-group">
+                                    <label for="category">
+                                        Category <span class="required">*</span>
+                                    </label>
+
+                                    <select id="category" required>
+                                        <option value="">Select category</option>
+                                        <option>Workshop</option>
+                                        <option>Hackathon</option>
+                                        <option>Competition</option>
+                                        <option>Seminar</option>
+                                        <option>Club Activity</option>
+                                        <option>Scholarship</option>
+                                        <option>Other</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="organizer">Organization</label>
+
+                                    <input
+                                        type="text"
+                                        id="organizer"
+                                        value="ACM IGDTUW"
+                                        required
+                                    >
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="audience">
+                                    Target Audience <span class="required">*</span>
+                                </label>
+
+                                <select id="audience" required>
+                                    <option value="">Select audience</option>
+                                    <option>All Students</option>
+                                    <option>First Year Students</option>
+                                    <option>Second Year Students</option>
+                                    <option>Third Year Students</option>
+                                    <option>Final Year Students</option>
+                                    <option>Specific Departments</option>
+                                </select>
+                            </div>
+
+                        </section>
+
+                        <!-- EVENT DETAILS -->
+                        <section class="card">
+
+                            <div class="card-heading">
+                                <div class="heading-icon">📅</div>
+
+                                <div>
+                                    <h2>Event Details</h2>
+                                    <p>Provide the important dates and location.</p>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+
+                                <div class="form-group">
+                                    <label for="eventDate">
+                                        Event Date <span class="required">*</span>
+                                    </label>
+
+                                    <input type="date" id="eventDate" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="deadline">
+                                        Registration Deadline
+                                    </label>
+
+                                    <input type="date" id="deadline">
+                                </div>
+
+                            </div>
+
+                            <div class="form-row">
+
+                                <div class="form-group">
+                                    <label for="startTime">Start Time</label>
+                                    <input type="time" id="startTime">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="endTime">End Time</label>
+                                    <input type="time" id="endTime">
+                                </div>
+
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location">
+                                    Venue / Location <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="location"
+                                    placeholder="e.g. LT-2, IGDTUW"
+                                    required
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="registrationLink">
+                                    Registration Link
+                                </label>
+
+                                <input
+                                    type="url"
+                                    id="registrationLink"
+                                    placeholder="https://example.com/register"
+                                >
+
+                                <p class="help-text">
+                                    Add an external registration link if required.
+                                </p>
+                            </div>
+
+                        </section>
+
+                        <!-- POSTER UPLOAD -->
+                        <section class="card">
+
+                            <div class="card-heading">
+                                <div class="heading-icon">🖼</div>
+
+                                <div>
+                                    <h2>Upload Poster</h2>
+                                    <p>Add a poster to make your announcement stand out.</p>
+                                </div>
+                            </div>
+
+                            <div class="upload-box">
+
+                                <div class="upload-icon">🖼</div>
+
+                                <h3>Upload event poster or image</h3>
+
+                                <p>PNG, JPG or WEBP · Maximum 5 MB</p>
+
+                                <label for="posterInput" class="upload-btn">
+                                    Choose Image
+                                </label>
+
+                                <input
+                                    type="file"
+                                    id="posterInput"
+                                    accept="image/png,image/jpeg,image/webp"
+                                >
+
+                                <div class="poster-preview" id="posterPreview">
+                                    <img id="posterImage" alt="Uploaded poster preview">
+
+                                    <button
+                                        type="button"
+                                        class="remove-poster"
+                                        id="removePoster"
+                                    >
+                                        Remove poster
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                        <!-- FORM ACTIONS -->
+                        <div class="actions">
+
+                            <button
+                                type="button"
+                                class="btn btn-secondary"
+                                id="draftBtn"
+                            >
+                                Save as Draft
+                            </button>
+
+                            <button type="submit" class="btn btn-primary">
+                                Publish Announcement →
+                            </button>
+
+                        </div>
+
+                        <p class="footer-note">
+                            Review your announcement details before publishing.
+                        </p>
+
+                    </div>
+
+                    <!-- RIGHT COLUMN -->
+                    <div class="right-column">
+
+                        <!-- AI EXTRACTION -->
+                        <section class="ai-card">
+
+                            <div class="ai-header">
+                                <div class="ai-icon">✨</div>
+
+                                <div>
+                                    <h3>AI Extraction</h3>
+                                    <p style="margin:5px 0 0;font-size:12px">
+                                        Smart announcement assistant
+                                    </p>
+                                </div>
+                            </div>
+
+                            <p>
+                                Already have a poster? Use AI to extract
+                                event information and fill in the form.
+                            </p>
+
+                            <button
+                                type="button"
+                                class="ai-btn"
+                                id="extractBtn"
+                            >
+                                ✨ Extract Information
+                            </button>
+
+                            <div class="ai-result" id="aiResult" aria-live="polite">
+                            </div>
+
+                        </section>
+
+                        <!-- LIVE PREVIEW -->
+                        <section class="card">
+
+                            <div class="card-heading">
+                                <div class="heading-icon">👁</div>
+
+                                <div>
+                                    <h2>Live Preview</h2>
+                                    <p>See how students will view your post.</p>
+                                </div>
+                            </div>
+
+                            <div class="preview-poster" id="previewPoster">
+                                <span id="previewOrganizer">ACM IGDTUW</span>
+
+                                <strong id="previewPosterTitle">
+                                    Your Event Title
+                                </strong>
+                            </div>
+
+                            <div class="preview-content">
+
+                                <h3 id="previewTitle">
+                                    Your Event Title
+                                </h3>
+
+                                <p id="previewDescription">
+                                    Your announcement description will appear here.
+                                </p>
+
+                                <div class="preview-details">
+
+                                    <div>
+                                        <span>📅</span>
+                                        <span id="previewDate">Event date</span>
+                                    </div>
+
+                                    <div>
+                                        <span>🕐</span>
+                                        <span id="previewTime">Event time</span>
+                                    </div>
+
+                                    <div>
+                                        <span>📍</span>
+                                        <span id="previewLocation">Event location</span>
+                                    </div>
+
+                                    <div>
+                                        <span>📋</span>
+                                        <span id="previewCategory">Category</span>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const formFields = [
+    "title",
+    "description",
+    "category",
+    "organizer",
+    "audience",
+    "eventDate",
+    "deadline",
+    "startTime",
+    "endTime",
+    "location",
+    "registrationLink"
+];
+
+let uploadedPoster = null;
+
+/* SET MINIMUM DATE TO TODAY */
+
+const today = new Date();
+const localToday = [
+    today.getFullYear(),
+    String(today.getMonth() + 1).padStart(2, "0"),
+    String(today.getDate()).padStart(2, "0")
+].join("-");
+
+$("eventDate").min = localToday;
+$("deadline").min = localToday;
+
+/* FORMAT DATE */
+
+function formatDate(date) {
+    if (!date) return "Event date";
+
+    return new Date(date + "T00:00:00").toLocaleDateString(
+        "en-IN",
+        {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        }
+    );
+}
+
+/* FORMAT TIME */
+
+function formatTime(time) {
+    if (!time) return "";
+
+    const [hours, minutes] = time.split(":");
+    const date = new Date();
+
+    date.setHours(Number(hours), Number(minutes));
+
+    return date.toLocaleTimeString("en-IN", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+    });
+}
+
+/* UPDATE LIVE PREVIEW */
+
+function updatePreview() {
+    const title = $("title").value.trim() || "Your Event Title";
+
+    $("previewTitle").textContent = title;
+    $("previewPosterTitle").textContent = title;
+
+    $("previewDescription").textContent =
+        $("description").value.trim() ||
+        "Your announcement description will appear here.";
+
+    $("previewOrganizer").textContent =
+        $("organizer").value.trim() || "Your Organization";
+
+    $("previewDate").textContent = formatDate($("eventDate").value);
+
+    const start = formatTime($("startTime").value);
+    const end = formatTime($("endTime").value);
+
+    $("previewTime").textContent =
+        start && end ? start + " – " + end :
+        start || end || "Event time";
+
+    $("previewLocation").textContent =
+        $("location").value.trim() || "Event location";
+
+    $("previewCategory").textContent =
+        $("category").value || "Category";
+
+    $("previewPoster").style.background =
+        "linear-gradient(145deg, #C5A5D6, #9A7AB5)";
+}
+
+/* LISTEN FOR FORM CHANGES */
+
+formFields.forEach(id => {
+    $(id).addEventListener("input", updatePreview);
+    $(id).addEventListener("change", updatePreview);
+});
+
+/* POSTER UPLOAD */
+
+$("posterInput").addEventListener("change", event => {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    const validTypes = [
+        "image/png",
+        "image/jpeg",
+        "image/webp"
+    ];
+
+    if (!validTypes.includes(file.type)) {
+        alert("Please upload a PNG, JPG or WEBP image.");
+        event.target.value = "";
+        return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+        alert("The poster must be smaller than 5 MB.");
+        event.target.value = "";
+        return;
+    }
+
+    if (uploadedPoster) {
+        URL.revokeObjectURL(uploadedPoster);
+    }
+
+    uploadedPoster = URL.createObjectURL(file);
+
+    $("posterImage").src = uploadedPoster;
+    $("posterPreview").style.display = "block";
+
+    $("previewPoster").innerHTML = "";
+
+    const image = document.createElement("img");
+    image.src = uploadedPoster;
+    image.alt = "Announcement poster";
+
+    $("previewPoster").appendChild(image);
+});
+
+/* REMOVE POSTER */
+
+$("removePoster").addEventListener("click", () => {
+    if (uploadedPoster) {
+        URL.revokeObjectURL(uploadedPoster);
+        uploadedPoster = null;
+    }
+
+    $("posterInput").value = "";
+    $("posterPreview").style.display = "none";
+
+    $("previewPoster").innerHTML = `
+        <span id="previewOrganizer">ACM IGDTUW</span>
+        <strong id="previewPosterTitle">Your Event Title</strong>
+    `;
+
+    updatePreview();
+});
+
+/* MOCK AI EXTRACTION */
+
+$("extractBtn").addEventListener("click", () => {
+    const result = $("aiResult");
+
+    result.style.display = "block";
+
+    if (!$("posterInput").files.length) {
+        result.textContent =
+            "Please upload an event poster first. " +
+            "The AI assistant can then extract its information.";
+        return;
+    }
+
+    result.innerHTML = `
+        <strong>Demo extraction</strong><br>
+        Poster uploaded successfully.<br><br>
+        In the connected version, AI will extract the title,
+        date, venue, registration deadline and other details.
+        You can review and edit the extracted information
+        before publishing.
+    `;
+});
+
+/* SAVE DRAFT */
+
+$("draftBtn").addEventListener("click", () => {
+    const draft = {};
+
+    formFields.forEach(id => {
+        draft[id] = $(id).value;
+    });
+
+    alert(
+        "Draft preview saved in memory for this demo.\n\n" +
+        "Connect Supabase to save drafts permanently."
+    );
+
+    console.log("Draft:", draft);
+});
+
+/* PUBLISH ANNOUNCEMENT */
+
+$("announcementForm").addEventListener("submit", event => {
+    event.preventDefault();
+
+    if (!$("announcementForm").reportValidity()) return;
+
+    const eventDate = $("eventDate").value;
+    const deadline = $("deadline").value;
+
+    if (eventDate < localToday) {
+        alert("Please select a future event date.");
+        return;
+    }
+
+    if (deadline && deadline > eventDate) {
+        alert("Registration deadline cannot be after the event date.");
+        return;
+    }
+
+    const announcement = {};
+
+    formFields.forEach(id => {
+        announcement[id] = $(id).value;
+    });
+
+    announcement.status = "Published";
+
+    console.log("Announcement:", announcement);
+
+    alert(
+        "Announcement is ready to publish!\n\n" +
+        "Connect Supabase to save it and display it " +
+        "on the Student Interface."
+    );
+});
+
+updatePreview();
+</script>
+
+</body>
+</html>

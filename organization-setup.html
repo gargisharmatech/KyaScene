@@ -1,0 +1,515 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set Up Organization | Campus Companion</title>
+
+  <style>
+    :root {
+      --cream: #FAF0E6;
+      --purple: #8B45FF;
+      --lavender: #CBA9CF;
+      --gold: #C99524;
+      --orange: #F34B16;
+      --blue: #D4E9F8;
+      --yellow: #F1E1B7;
+      --ink: #3D3A3B;
+      --muted: #777071;
+      --white: #FFFCF6;
+      --border: #E8DCC8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      min-height: 100vh;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Arial, sans-serif;
+    }
+
+    .page {
+      width: min(100%, 1000px);
+      margin: 0 auto;
+      overflow: hidden;
+      border: 2px solid var(--purple);
+      border-radius: 24px;
+      background: var(--white);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 22px 30px;
+      border-bottom: 1px solid var(--border);
+      background: #FFF9EC;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 45px;
+      height: 45px;
+      flex: 0 0 auto;
+    }
+
+    .brand h1 {
+      margin: 0;
+      color: #174E9B;
+      font: 700 23px/1.05 Georgia, serif;
+    }
+
+    .brand p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .step {
+      padding: 9px 13px;
+      border-radius: 30px;
+      background: #F0E6FF;
+      color: #6330BD;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    main {
+      padding: 34px clamp(18px, 5vw, 52px) 42px;
+    }
+
+    .intro {
+      max-width: 680px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--orange);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      color: #202D4C;
+      font: 700 clamp(30px, 5vw, 42px)/1.1 Georgia, serif;
+    }
+
+    .intro p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .progress-track {
+      height: 8px;
+      margin: 22px 0 30px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #EDE5F4;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--purple);
+      transition: width .2s ease;
+    }
+
+    .form-section {
+      margin-bottom: 24px;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: #FFFDF8;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin: 0 0 18px;
+      color: #202D4C;
+      font: 700 21px Georgia, serif;
+    }
+
+    .section-number {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      border-radius: 11px;
+      background: var(--blue);
+      color: #174E9B;
+      font: 700 15px Arial, sans-serif;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      color: #514B4C;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .optional {
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      min-width: 0;
+      padding: 12px 13px;
+      border: 1px solid #DCCFE3;
+      border-radius: 11px;
+      background: var(--white);
+      color: var(--ink);
+      font: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(139, 69, 255, .13);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .confirm {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 20px 0;
+      color: #5D5657;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .confirm input {
+      width: 17px;
+      height: 17px;
+      margin-top: 1px;
+      accent-color: var(--purple);
+      flex: 0 0 auto;
+    }
+
+    .form-error {
+      min-height: 20px;
+      margin: 0 0 12px;
+      color: #B52F16;
+      font-size: 13px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 12px 20px;
+      border: 0;
+      border-radius: 13px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .button-secondary {
+      border: 1px solid var(--lavender);
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .button-primary {
+      background: var(--purple);
+      color: white;
+    }
+
+    .button-primary:hover { background: #7131D8; }
+
+    @media (max-width: 620px) {
+      body { padding: 8px; }
+      .page { border-radius: 17px; }
+      header { padding: 17px; }
+      .brand h1 { font-size: 19px; }
+      .brand-mark { width: 38px; height: 38px; }
+      .step { font-size: 11px; padding: 8px 10px; }
+      main { padding: 25px 14px; }
+      .form-section { padding: 16px 13px; }
+      .fields { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .actions { flex-direction: column-reverse; }
+      .button { width: 100%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 70 70" role="img" aria-label="Campus Companion megaphone">
+          <path d="M8 25h18v23H8z" fill="#F34B16"/>
+          <path d="M26 23 51 12q7-2 7 6v38q0 7-7 5L26 49z" fill="#CBA9CF"/>
+          <path d="M50 12q9-3 9 7v36q0 9-9 6z" fill="#F34B16"/>
+          <path d="M15 48h11l7 16h-9z" fill="#8B45FF"/>
+          <path d="M59 26q9 2 7 10-1 5-7 6" fill="none" stroke="#3D3A3B" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+        <div>
+          <h1>Kya<br>Scene</h1>
+          <p>Organization Portal</p>
+        </div>
+      </div>
+      <span class="step">Organization setup</span>
+    </header>
+
+    <main>
+      <div class="intro">
+        <p class="eyebrow">One quick setup</p>
+        <h2>Tell us about your club or society</h2>
+        <p>
+          Add a few details so students can recognize your organization
+          and discover your events, announcements, and opportunities.
+        </p>
+      </div>
+
+      <div class="progress-track" aria-label="Form completion">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <form id="organizationForm">
+        <section class="form-section">
+          <h3 class="section-title"><span class="section-number">1</span> Organization details</h3>
+          <div class="fields">
+            <div class="field">
+              <label for="clubName">Club or society name *</label>
+              <input id="clubName" name="clubName" required maxlength="100"
+                     placeholder="e.g. Technical Society">
+            </div>
+
+            <div class="field">
+              <label for="organizationType">Organization type *</label>
+              <select id="organizationType" name="organizationType" required>
+                <option value="">Select type</option>
+                <option>Technical / Academic</option>
+                <option>Cultural / Arts</option>
+                <option>Sports / Fitness</option>
+                <option>Social Impact / Community</option>
+                <option>Department Society</option>
+                <option>Student Council</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="institution">College / institution *</label>
+              <input id="institution" name="institution" required maxlength="120"
+                     placeholder="Enter institution name">
+            </div>
+
+            <div class="field">
+              <label for="department">Department <span class="optional">(optional)</span></label>
+              <input id="department" name="department" maxlength="100"
+                     placeholder="e.g. Computer Science">
+            </div>
+
+            <div class="field full">
+              <label for="description">About your organization *</label>
+              <textarea id="description" name="description" required maxlength="600"
+                        placeholder="What does your club do? What activities or opportunities do you offer?"></textarea>
+              <p class="hint">Keep it short and clear. This helps students understand your organization.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3 class="section-title"><span class="section-number">2</span> Contact information</h3>
+          <div class="fields">
+            <div class="field">
+              <label for="officialEmail">Official organization email *</label>
+              <input id="officialEmail" name="officialEmail" type="email" required maxlength="150"
+                     placeholder="club@college.edu">
+            </div>
+
+            <div class="field">
+              <label for="contactPerson">Contact person / representative *</label>
+              <input id="contactPerson" name="contactPerson" required maxlength="100"
+                     placeholder="Name of representative">
+            </div>
+
+            <div class="field">
+              <label for="phone">Contact number <span class="optional">(optional)</span></label>
+              <input id="phone" name="phone" type="tel" maxlength="25"
+                     placeholder="Phone number">
+            </div>
+
+            <div class="field">
+              <label for="website">Website or social link <span class="optional">(optional)</span></label>
+              <input id="website" name="website" type="url" maxlength="250"
+                     placeholder="https://...">
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h3 class="section-title"><span class="section-number">3</span> Who can join?</h3>
+          <div class="fields">
+            <div class="field">
+              <label for="audience">Intended audience *</label>
+              <select id="audience" name="audience" required>
+                <option value="">Select audience</option>
+                <option>All students</option>
+                <option>Students from my department</option>
+                <option>Specific year or course</option>
+                <option>Faculty and students</option>
+                <option>Other</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="frequency">How often do you post? *</label>
+              <select id="frequency" name="frequency" required>
+                <option value="">Select frequency</option>
+                <option>Several times a week</option>
+                <option>About once a week</option>
+                <option>Several times a month</option>
+                <option>Only for major events</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <label class="confirm">
+          <input id="confirmDetails" type="checkbox" required>
+          <span>I confirm that the information provided is accurate and that I am authorized to represent this organization.</span>
+        </label>
+
+        <p class="form-error" id="formError" aria-live="polite"></p>
+
+        <div class="actions">
+          <a class="button button-secondary" href="login.html">Back to Login</a>
+          <button class="button button-primary" type="submit">Save &amp; Go to Home →</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <script>
+    const form = document.getElementById("organizationForm");
+    const progressBar = document.getElementById("progressBar");
+    const formError = document.getElementById("formError");
+
+    const requiredFields = [
+      "clubName",
+      "organizationType",
+      "institution",
+      "description",
+      "officialEmail",
+      "contactPerson",
+      "audience",
+      "frequency"
+    ];
+
+    function updateProgress() {
+      let completed = 0;
+
+      requiredFields.forEach(id => {
+        const field = document.getElementById(id);
+        if (field.value.trim()) completed++;
+      });
+
+      if (document.getElementById("confirmDetails").checked) completed++;
+
+      progressBar.style.width = `${Math.round(completed / (requiredFields.length + 1) * 100)}%`;
+    }
+
+    form.addEventListener("input", updateProgress);
+    form.addEventListener("change", updateProgress);
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      formError.textContent = "";
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const organization = {
+        clubName: document.getElementById("clubName").value.trim(),
+        organizationType: document.getElementById("organizationType").value,
+        institution: document.getElementById("institution").value.trim(),
+        department: document.getElementById("department").value.trim(),
+        description: document.getElementById("description").value.trim(),
+        officialEmail: document.getElementById("officialEmail").value.trim(),
+        contactPerson: document.getElementById("contactPerson").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        website: document.getElementById("website").value.trim(),
+        audience: document.getElementById("audience").value,
+        frequency: document.getElementById("frequency").value
+      };
+
+      try {
+        localStorage.setItem("campusCompanionOrganization", JSON.stringify(organization));
+        window.location.href = "dashboard.html";
+      } catch (error) {
+        formError.textContent = "Could not save your details in this browser. Please try again.";
+      }
+    });
+
+    updateProgress();
+  </script>
+</body>
+</html>

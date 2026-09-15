@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>KyaScene | AI Extraction</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background: #F8F0E6;
+    --surface: #FFF9F2;
+    --surface-light: #FFFDF9;
+    --surface-muted: #F6EEE5;
+
+    --primary: #FC451B;
+    --primary-dark: #E43B14;
+    --primary-light: #FFF0E9;
+
+    --lavender: #CAA2D4;
+    --lavender-dark: #9871A4;
+    --lavender-light: #EFE3F2;
+
+    --gold: #D69B0B;
+    --gold-dark: #85620B;
+    --gold-light: #F7E9BE;
+
+    --blue: #CAE2F1;
+    --blue-dark: #315C75;
+    --blue-light: #EAF4FA;
+
+    --green: #16805C;
+    --green-light: #E9F6EF;
+    --red: #B73A25;
+    --red-light: #FFF0EC;
+
+    --ink: #163247;
+    --text: #4F5D66;
+    --muted: #807A74;
+
+    --border: #E3D4C5;
+    --border-light: #EFE4D9;
+
+    --shadow: 0 2px 8px rgba(83, 55, 35, 0.04);
+    --shadow-hover: 0 8px 24px rgba(83, 55, 35, 0.09);
+
+    --radius: 20px;
+    --radius-small: 12px;
+}
+
+html {
+    color-scheme: light;
+}
+
+body {
+    min-width: 320px;
+    background: var(--background);
+    color: var(--text);
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* =================================
+   APPLICATION LAYOUT
+================================= */
+
+.app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 228px minmax(0, 1fr);
+    background: var(--background);
+}
+
+/* =================================
+   SIDEBAR
+================================= */
+
+.sidebar {
+    min-height: 100vh;
+    padding: 17px 20px 28px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--border);
+    background: var(--background);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 68px;
+}
+
+.brand-mark {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--lavender);
+}
+
+.brand h2 {
+    color: var(--ink);
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.brand p {
+    margin-top: 5px;
+    color: var(--text);
+    font-size: 9px;
+    line-height: 1.4;
+    letter-spacing: 1.7px;
+    text-transform: uppercase;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.nav a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 5px;
+    border-radius: 10px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.nav a:hover,
+.nav a:focus-visible {
+    color: var(--primary);
+    background: rgba(255, 255, 255, 0.35);
+    outline: none;
+}
+
+.nav-icon {
+    width: 19px;
+    height: 19px;
+    flex: 0 0 auto;
+    color: var(--primary);
+}
+
+/* =================================
+   MAIN AND TOP BAR
+================================= */
+
+.main {
+    min-width: 0;
+}
+
+.topbar {
+    min-height: 70px;
+    padding: 8px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--background);
+}
+
+.search {
+    position: relative;
+    width: min(506px, 58%);
+}
+
+.search input {
+    width: 100%;
+    height: 52px;
+    padding: 0 20px 0 46px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    outline: none;
+    background: var(--surface);
+    color: var(--ink);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.search input::placeholder {
+    color: #8F8882;
+}
+
+.search input:focus {
+    border-color: var(--lavender-dark);
+    box-shadow: 0 0 0 3px rgba(202, 162, 212, 0.17);
+}
+
+.search svg {
+    position: absolute;
+    top: 50%;
+    left: 17px;
+    width: 17px;
+    height: 17px;
+    color: var(--ink);
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.notification {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--lavender-dark);
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.notification:hover {
+    color: var(--primary);
+    background: var(--surface);
+}
+
+.notification svg {
+    width: 18px;
+    height: 18px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.profile strong {
+    display: block;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.profile small {
+    display: block;
+    margin-top: 1px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+/* =================================
+   PAGE CONTENT
+================================= */
+
+.content {
+    width: min(1256px, calc(100% - 56px));
+    margin: 0 auto;
+    padding: 34px 0 44px;
+}
+
+.breadcrumb {
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.breadcrumb span {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 25px;
+}
+
+.page-header h1 {
+    margin-bottom: 5px;
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(30px, 3vw, 36px);
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.page-header p {
+    max-width: 700px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 17px;
+    border: 1px solid #E0CCE5;
+    border-radius: 999px;
+    background: var(--lavender-light);
+    color: var(--lavender-dark);
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* =================================
+   WORKFLOW STEPS
+================================= */
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.step {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 17px 18px;
+    border: 1px solid var(--border-light);
+    border-radius: 17px;
+    background: var(--surface);
+    box-shadow: var(--shadow);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.step.active {
+    border-color: #E7AE9D;
+    box-shadow: 0 5px 18px rgba(252, 69, 27, 0.08);
+}
+
+.step.complete {
+    border-color: #DDC9E2;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.step:nth-child(1) .step-number {
+    background: var(--lavender);
+    color: white;
+}
+
+.step:nth-child(2) .step-number {
+    background: var(--gold);
+    color: white;
+}
+
+.step:nth-child(3) .step-number {
+    background: var(--blue);
+    color: var(--blue-dark);
+}
+
+.step.active .step-number {
+    background: var(--primary);
+    color: white;
+}
+
+.step strong {
+    display: block;
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.step small {
+    display: block;
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* =================================
+   WORKSPACE
+================================= */
+
+.workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+    gap: 20px;
+}
+
+.panel {
+    min-width: 0;
+    padding: 25px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow);
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    margin-bottom: 21px;
+}
+
+.heading-icon {
+    width: 43px;
+    height: 43px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 13px;
+    background: var(--lavender);
+    color: white;
+    font-size: 20px;
+}
+
+.panel:nth-child(2) .heading-icon {
+    background: var(--blue);
+    color: var(--blue-dark);
+}
+
+.panel-heading h2 {
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.panel-heading p {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* =================================
+   UPLOAD AREA
+================================= */
+
+.upload-zone {
+    min-height: 235px;
+    padding: 26px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #D9C7B7;
+    border-radius: 16px;
+    background: var(--surface-light);
+    text-align: center;
+    cursor: pointer;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+.upload-icon {
+    width: 58px;
+    height: 58px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 15px;
+    border-radius: 16px;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 27px;
+}
+
+.upload-zone h3 {
+    margin-bottom: 7px;
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.upload-zone p {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.browse-btn {
+    margin-top: 16px;
+    padding: 9px 17px;
+    border: 1px solid var(--primary);
+    border-radius: 999px;
+    background: white;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.upload-zone:hover .browse-btn {
+    background: var(--primary);
+    color: white;
+}
+
+.upload-zone input {
+    display: none;
+}
+
+/* =================================
+   SELECTED FILE
+================================= */
+
+.file-info {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-small);
+    background: var(--surface-light);
+}
+
+.file-info.visible {
+    display: flex;
+}
+
+.file-icon {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 10px;
+    background: var(--lavender-light);
+    color: var(--lavender-dark);
+    font-size: 19px;
+}
+
+.file-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.file-details strong {
+    display: block;
+    color: var(--ink);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.file-details small {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.remove-file {
+    width: 30px;
+    height: 30px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--red);
+    font-size: 19px;
+    transition: background 0.2s ease;
+}
+
+.remove-file:hover {
+    background: var(--red-light);
+}
+
+/* =================================
+   POSTER PREVIEW
+================================= */
+
+.preview {
+    display: none;
+    margin-top: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--surface-light);
+    text-align: center;
+}
+
+.preview.visible {
+    display: block;
+}
+
+.preview img {
+    display: block;
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+}
+
+.preview figcaption {
+    padding: 9px;
+    border-top: 1px solid var(--border-light);
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* =================================
+   BUTTONS
+================================= */
+
+.btn {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--primary-dark);
+    box-shadow: 0 5px 16px rgba(252, 69, 27, 0.24);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    border-color: var(--border);
+    background: var(--surface-light);
+    color: var(--ink);
+}
+
+.btn-secondary:hover {
+    border-color: #D2BEAC;
+    background: var(--surface-muted);
+}
+
+.btn:focus-visible {
+    outline: 3px solid rgba(252, 69, 27, 0.18);
+    outline-offset: 2px;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.full-btn {
+    width: 100%;
+    margin-top: 18px;
+}
+
+/* =================================
+   AI HELPER
+================================= */
+
+.helper {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 15px;
+    border: 1px solid #E9D7A7;
+    border-radius: 13px;
+    background: var(--gold-light);
+    color: #725918;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.helper > span {
+    color: var(--gold-dark);
+    font-size: 18px;
+}
+
+.helper strong {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--ink);
+}
+
+.disclaimer {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-light);
+    color: var(--muted);
+    font-size: 10px;
+    line-height: 1.65;
+}
+
+/* =================================
+   FORM
+================================= */
+
+.form-intro {
+    margin: -8px 0 20px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.field {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+.field label {
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 13px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    outline: none;
+    background: var(--surface-light);
+    color: var(--text);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(252, 69, 27, 0.1);
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+    color: #AAA29B;
+}
+
+.field textarea {
+    min-height: 95px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 23px;
+}
+
+/* =================================
+   MESSAGES AND PROGRESS
+================================= */
+
+.result-box {
+    display: none;
+    margin-top: 16px;
+    padding: 14px;
+    border: 1px solid #DED0E2;
+    border-radius: 12px;
+    background: var(--lavender-light);
+    color: var(--lavender-dark);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.result-box.visible {
+    display: block;
+}
+
+.result-box.success {
+    border-color: #C6E5D6;
+    background: var(--green-light);
+    color: var(--green);
+}
+
+.result-box.error {
+    border-color: #F0C6BB;
+    background: var(--red-light);
+    color: var(--red);
+}
+
+.progress {
+    height: 5px;
+    margin-top: 12px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(152, 113, 164, 0.18);
+}
+
+.progress-bar {
+    width: 0;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--primary);
+    transition: width 0.2s ease;
+}
+
+/* =================================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 1100px) {
+    .app {
+        grid-template-columns: 205px minmax(0, 1fr);
+    }
+
+    .brand h2 {
+        font-size: 17px;
+        letter-spacing: 3px;
+    }
+
+    .content {
+        width: min(900px, calc(100% - 40px));
+    }
+
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 800px) {
+    .app {
+        grid-template-columns: 76px minmax(0, 1fr);
+    }
+
+    .sidebar {
+        align-items: center;
+        padding: 20px 10px;
+    }
+
+    .brand {
+        justify-content: center;
+        margin-bottom: 45px;
+    }
+
+    .brand-mark {
+        width: 12px;
+        height: 12px;
+    }
+
+    .brand-text,
+    .nav-label {
+        display: none;
+    }
+
+    .nav a {
+        width: 48px;
+        height: 48px;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .nav-icon {
+        width: 21px;
+        height: 21px;
+    }
+
+    .topbar {
+        padding: 9px 18px;
+    }
+
+    .search {
+        width: min(460px, 70%);
+    }
+
+    .profile-details {
+        display: none;
+    }
+
+    .content {
+        width: calc(100% - 32px);
+        padding-top: 25px;
+    }
+
+    .page-header {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 650px) {
+    .steps {
+        grid-template-columns: 1fr;
+    }
+
+    .page-header {
+        flex-direction: column;
+    }
+
+    .header-badge {
+        white-space: normal;
+    }
+}
+
+@media (max-width: 520px) {
+    .app {
+        display: block;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .topbar {
+        min-height: 64px;
+        padding: 9px 14px;
+    }
+
+    .search {
+        width: calc(100% - 55px);
+    }
+
+    .notification,
+    .profile-details {
+        display: none;
+    }
+
+    .profile {
+        gap: 0;
+    }
+
+    .content {
+        width: calc(100% - 28px);
+        padding: 22px 0 32px;
+    }
+
+    .page-header h1 {
+        font-size: 29px;
+    }
+
+    .panel {
+        padding: 18px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: auto;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <span class="brand-mark" aria-hidden="true"></span>
+
+            <div class="brand-text">
+                <h2>Kya<br>Scene</h2>
+                <p>Organization Portal</p>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="dashboard.html">
+                <svg
+                    class="nav-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                >
+                    <path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/>
+                </svg>
+
+                <span class="nav-label">Back to Home</span>
+            </a>
+        </nav>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="search">
+               
+
+                <input
+                    type="search"
+                    placeholder="Search your announcements..."
+                    aria-label="Search announcements"
+                >
+            </div>
+
+            <div class="profile">
+
+                <button
+                    type="button"
+                    class="notification"
+                    aria-label="Notifications"
+                    title="Notifications"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        aria-hidden="true"
+                    >
+                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                        <path d="M10 21h4"/>
+                    </svg>
+                </button>
+
+                <div class="avatar">AM</div>
+
+                <div class="profile-details">
+                    <strong>Assert Merkle IGDTUW</strong>
+                    <small>Organization</small>
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <div class="content">
+
+            <div class="breadcrumb">
+                Dashboard / <span>AI Extraction</span>
+            </div>
+
+            <!-- PAGE HEADER -->
+            <section class="page-header">
+
+                <div>
+                    <h1>AI Extraction</h1>
+
+                    <p>
+                        Turn your event posters into ready-to-publish
+                        announcements in seconds.
+                    </p>
+                </div>
+
+                <div class="header-badge">
+                    ✦ AI-powered assistance
+                </div>
+
+            </section>
+
+            <!-- WORKFLOW -->
+            <section class="steps" aria-label="Extraction workflow">
+
+                <div class="step active" id="step1">
+                    <div class="step-number">1</div>
+
+                    <div>
+                        <strong>Upload Poster</strong>
+                        <small>Choose an image or PDF</small>
+                    </div>
+                </div>
+
+                <div class="step" id="step2">
+                    <div class="step-number">2</div>
+
+                    <div>
+                        <strong>Review Details</strong>
+                        <small>Verify extracted information</small>
+                    </div>
+                </div>
+
+                <div class="step" id="step3">
+                    <div class="step-number">3</div>
+
+                    <div>
+                        <strong>Publish</strong>
+                        <small>Share with students</small>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- WORKSPACE -->
+            <section class="workspace">
+
+                <!-- UPLOAD PANEL -->
+                <div class="panel">
+
+                    <div class="panel-heading">
+
+                        <div class="heading-icon">▧</div>
+
+                        <div>
+                            <h2>Upload Announcement</h2>
+                            <p>Upload your event poster or notice.</p>
+                        </div>
+
+                    </div>
+
+                    <label
+                        class="upload-zone"
+                        id="uploadZone"
+                        for="posterInput"
+                    >
+
+                        <div class="upload-icon">▧</div>
+
+                        <h3>Upload your poster or image</h3>
+
+                        <p>
+                            Drag and drop your file here<br>
+                            or browse files from your device.
+                        </p>
+
+                        <span class="browse-btn">Browse Files</span>
+
+                        <input
+                            type="file"
+                            id="posterInput"
+                            accept="image/*,.pdf"
+                        >
+
+                    </label>
+
+                    <div class="file-info" id="fileInfo">
+
+                        <div class="file-icon">▤</div>
+
+                        <div class="file-details">
+                            <strong id="fileName">Poster.png</strong>
+                            <small id="fileSize">0 KB</small>
+                        </div>
+
+                        <button
+                            class="remove-file"
+                            id="removeFile"
+                            type="button"
+                            aria-label="Remove file"
+                        >
+                            ×
+                        </button>
+
+                    </div>
+
+                    <figure class="preview" id="preview">
+                        <img
+                            id="previewImage"
+                            alt="Uploaded poster preview"
+                        >
+                        <figcaption>Poster preview</figcaption>
+                    </figure>
+
+                    <button
+                        class="btn btn-primary full-btn"
+                        id="extractBtn"
+                        type="button"
+                        disabled
+                    >
+                        ✦ Extract Details with AI
+                    </button>
+
+                    <div
+                        class="result-box"
+                        id="resultBox"
+                        role="status"
+                        aria-live="polite"
+                    ></div>
+
+                    <div class="helper">
+                        <span>✦</span>
+
+                        <div>
+                            <strong>Let AI do the heavy lifting!</strong>
+                            Extract event details automatically instead of
+                            entering everything manually.
+                        </div>
+                    </div>
+
+                    <div class="disclaimer">
+                        Please review all extracted details before publishing.
+                        AI-generated information may contain errors.
+                    </div>
+
+                </div>
+
+                <!-- EXTRACTED INFORMATION PANEL -->
+                <div class="panel">
+
+                    <div class="panel-heading">
+
+                        <div class="heading-icon">✎</div>
+
+                        <div>
+                            <h2>Extracted Information</h2>
+                            <p>Review and edit your announcement details.</p>
+                        </div>
+
+                    </div>
+
+                    <p class="form-intro">
+                        The information extracted from your poster will appear
+                        below. You can also fill in the fields manually.
+                    </p>
+
+                    <form id="announcementForm">
+
+                        <div class="form-grid">
+
+                            <div class="field full">
+                                <label for="title">
+                                    Announcement Title *
+                                </label>
+
+                                <input
+                                    id="title"
+                                    name="title"
+                                    type="text"
+                                    placeholder="e.g. Tech for Good Hackathon"
+                                    required
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="organizer">Organizer *</label>
+
+                                <input
+                                    id="organizer"
+                                    name="organizer"
+                                    type="text"
+                                    value="ACM IGDTUW"
+                                    required
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="category">Category *</label>
+
+                                <select
+                                    id="category"
+                                    name="category"
+                                    required
+                                >
+                                    <option value="">Select category</option>
+                                    <option>Workshop</option>
+                                    <option>Hackathon</option>
+                                    <option>Competition</option>
+                                    <option>Scholarship</option>
+                                    <option>Internship</option>
+                                    <option>Seminar</option>
+                                    <option>Drive</option>
+                                    <option>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="field">
+                                <label for="startDate">Event Date *</label>
+
+                                <input
+                                    id="startDate"
+                                    name="startDate"
+                                    type="date"
+                                    required
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="deadline">
+                                    Registration Deadline
+                                </label>
+
+                                <input
+                                    id="deadline"
+                                    name="deadline"
+                                    type="date"
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="startTime">Start Time</label>
+
+                                <input
+                                    id="startTime"
+                                    name="startTime"
+                                    type="time"
+                                >
+                            </div>
+
+                            <div class="field">
+                                <label for="endTime">End Time</label>
+
+                                <input
+                                    id="endTime"
+                                    name="endTime"
+                                    type="time"
+                                >
+                            </div>
+
+                            <div class="field full">
+                                <label for="venue">
+                                    Venue / Location
+                                </label>
+
+                                <input
+                                    id="venue"
+                                    name="venue"
+                                    type="text"
+                                    placeholder="e.g. Seminar Hall, IGDTUW"
+                                >
+                            </div>
+
+                            <div class="field full">
+                                <label for="eligibility">Eligibility</label>
+
+                                <input
+                                    id="eligibility"
+                                    name="eligibility"
+                                    type="text"
+                                    placeholder="e.g. Open to all students"
+                                >
+                            </div>
+
+                            <div class="field full">
+                                <label for="description">
+                                    Description *
+                                </label>
+
+                                <textarea
+                                    id="description"
+                                    name="description"
+                                    placeholder="Enter event details, requirements and other important information..."
+                                    required
+                                ></textarea>
+                            </div>
+
+                            <div class="field full">
+                                <label for="registrationLink">
+                                    Registration Link
+                                </label>
+
+                                <input
+                                    id="registrationLink"
+                                    name="registrationLink"
+                                    type="url"
+                                    placeholder="https://..."
+                                >
+                            </div>
+
+                        </div>
+
+                        <div class="form-actions">
+
+                            <button
+                                class="btn btn-secondary"
+                                type="button"
+                                id="resetBtn"
+                            >
+                                Clear Form
+                            </button>
+
+                            <button
+                                class="btn btn-secondary"
+                                type="button"
+                                id="draftBtn"
+                            >
+                                Save Draft
+                            </button>
+
+                            <button
+                                class="btn btn-primary"
+                                type="submit"
+                            >
+                                Publish Announcement →
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                    <div
+                        class="result-box"
+                        id="publishResult"
+                        role="status"
+                        aria-live="polite"
+                    ></div>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+const posterInput = document.getElementById("posterInput");
+const uploadZone = document.getElementById("uploadZone");
+const fileInfo = document.getElementById("fileInfo");
+const fileName = document.getElementById("fileName");
+const fileSize = document.getElementById("fileSize");
+const preview = document.getElementById("preview");
+const previewImage = document.getElementById("previewImage");
+const extractBtn = document.getElementById("extractBtn");
+const resultBox = document.getElementById("resultBox");
+const announcementForm = document.getElementById("announcementForm");
+const publishResult = document.getElementById("publishResult");
+
+let selectedFile = null;
+let previewUrl = null;
+let isExtracting = false;
+
+const maxFileSize = 10 * 1024 * 1024;
+
+/* =================================
+   MESSAGES
+================================= */
+
+function showMessage(element, message, type) {
+    element.className = "result-box visible " + type;
+    element.textContent = message;
+}
+
+function clearMessage(element) {
+    element.className = "result-box";
+    element.textContent = "";
+}
+
+/* =================================
+   FILE SIZE
+================================= */
+
+function formatFileSize(bytes) {
+    if (bytes >= 1024 * 1024) {
+        return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    }
+
+    return (bytes / 1024).toFixed(1) + " KB";
+}
+
+/* =================================
+   FILE UPLOAD
+================================= */
+
+function handleFile(file) {
+    if (!file) return;
+
+    clearMessage(resultBox);
+
+    const isImage = file.type.startsWith("image/");
+    const isPdf = file.type === "application/pdf";
+
+    if (!isImage && !isPdf) {
+        showMessage(
+            resultBox,
+            "Please upload a valid image or PDF file.",
+            "error"
+        );
+        return;
+    }
+
+    if (file.size > maxFileSize) {
+        showMessage(
+            resultBox,
+            "File size must be less than 10 MB.",
+            "error"
+        );
+        return;
+    }
+
+    selectedFile = file;
+
+    fileName.textContent = file.name;
+    fileSize.textContent = formatFileSize(file.size);
+
+    fileInfo.classList.add("visible");
+
+    if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+        previewUrl = null;
+    }
+
+    if (isImage) {
+        previewUrl = URL.createObjectURL(file);
+        previewImage.src = previewUrl;
+        preview.classList.add("visible");
+    } else {
+        preview.classList.remove("visible");
+        previewImage.removeAttribute("src");
+    }
+
+    extractBtn.disabled = false;
+    extractBtn.textContent = "✦ Extract Details with AI";
+
+    updateSteps(1);
+}
+
+posterInput.addEventListener("change", () => {
+    handleFile(posterInput.files[0]);
+});
+
+/* =================================
+   DRAG AND DROP
+================================= */
+
+["dragenter", "dragover"].forEach(eventName => {
+    uploadZone.addEventListener(eventName, event => {
+        event.preventDefault();
+        uploadZone.classList.add("dragover");
+    });
+});
+
+["dragleave", "drop"].forEach(eventName => {
+    uploadZone.addEventListener(eventName, event => {
+        event.preventDefault();
+        uploadZone.classList.remove("dragover");
+    });
+});
+
+uploadZone.addEventListener("drop", event => {
+    const file = event.dataTransfer.files[0];
+    handleFile(file);
+});
+
+/* =================================
+   REMOVE FILE
+================================= */
+
+document
+    .getElementById("removeFile")
+    .addEventListener("click", () => {
+        selectedFile = null;
+        posterInput.value = "";
+
+        fileInfo.classList.remove("visible");
+        preview.classList.remove("visible");
+
+        previewImage.removeAttribute("src");
+
+        if (previewUrl) {
+            URL.revokeObjectURL(previewUrl);
+            previewUrl = null;
+        }
+
+        extractBtn.disabled = true;
+        extractBtn.textContent = "✦ Extract Details with AI";
+
+        clearMessage(resultBox);
+        updateSteps(1);
+    });
+
+/* =================================
+   WORKFLOW STEPS
+================================= */
+
+function updateSteps(activeStep) {
+    [1, 2, 3].forEach(number => {
+        const step = document.getElementById("step" + number);
+        const circle = step.querySelector(".step-number");
+
+        step.classList.toggle("active", number === activeStep);
+        step.classList.toggle("complete", number < activeStep);
+
+        circle.textContent =
+            number < activeStep ? "✓" : number;
+    });
+}
+
+/* =================================
+   DEMO EXTRACTION
+================================= */
+
+extractBtn.addEventListener("click", async () => {
+    if (!selectedFile || isExtracting) return;
+
+    isExtracting = true;
+    extractBtn.disabled = true;
+    extractBtn.textContent = "Extracting...";
+
+    resultBox.className = "result-box visible";
+
+    resultBox.innerHTML = `
+        <strong>✦ Processing your poster...</strong>
+
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+    `;
+
+    const progressBar = document.getElementById("progressBar");
+
+    for (let progress = 0; progress <= 100; progress += 10) {
+        progressBar.style.width = progress + "%";
+
+        await new Promise(resolve => {
+            setTimeout(resolve, 100);
+        });
+    }
+
+    /*
+       DEMO EXTRACTION
+
+       Replace this object with data returned by your
+       OCR or AI extraction backend.
+    */
+
+    const demoDetails = {
+        title: "Tech for Good Hackathon",
+        organizer: "ACM IGDTUW",
+        category: "Hackathon",
+        startDate: "2025-09-25",
+        deadline: "2025-09-21",
+        startTime: "09:00",
+        endTime: "18:00",
+        venue: "Seminar Hall, IGDTUW",
+        eligibility: "Open to all students",
+        description:
+            "Join us for the Tech for Good Hackathon! " +
+            "Build innovative solutions, collaborate with " +
+            "fellow students and create a positive impact."
+    };
+
+    Object.entries(demoDetails).forEach(([id, value]) => {
+        const field = document.getElementById(id);
+
+        if (field && !field.value.trim()) {
+            field.value = value;
+        }
+    });
+
+    updateSteps(2);
+
+    showMessage(
+        resultBox,
+        "Demo extraction completed. Sample details have been added. Please verify and edit them before publishing.",
+        "success"
+    );
+
+    extractBtn.textContent = "✓ Extraction Complete";
+    extractBtn.disabled = false;
+    isExtracting = false;
+});
+
+/* =================================
+   CLEAR FORM
+================================= */
+
+document
+    .getElementById("resetBtn")
+    .addEventListener("click", () => {
+        if (!confirm("Clear all announcement details?")) {
+            return;
+        }
+
+        announcementForm.reset();
+
+        clearMessage(publishResult);
+        clearMessage(resultBox);
+
+        updateSteps(1);
+    });
+
+/* =================================
+   SAVE DRAFT
+================================= */
+
+document
+    .getElementById("draftBtn")
+    .addEventListener("click", () => {
+        const data = Object.fromEntries(
+            new FormData(announcementForm).entries()
+        );
+
+        try {
+            localStorage.setItem(
+                "campusCompanionAIDraft",
+                JSON.stringify(data)
+            );
+
+            showMessage(
+                publishResult,
+                "Draft saved successfully in this browser.",
+                "success"
+            );
+        } catch {
+            showMessage(
+                publishResult,
+                "The draft could not be saved in this browser.",
+                "error"
+            );
+        }
+
+        console.log("Draft data:", data);
+    });
+
+/* =================================
+   PUBLISH
+================================= */
+
+announcementForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    if (!announcementForm.reportValidity()) {
+        return;
+    }
+
+    const eventDate =
+        document.getElementById("startDate").value;
+
+    const deadline =
+        document.getElementById("deadline").value;
+
+    const startTime =
+        document.getElementById("startTime").value;
+
+    const endTime =
+        document.getElementById("endTime").value;
+
+    if (deadline && eventDate && deadline > eventDate) {
+        showMessage(
+            publishResult,
+            "Registration deadline cannot be after the event date.",
+            "error"
+        );
+        return;
+    }
+
+    if (startTime && endTime && endTime <= startTime) {
+        showMessage(
+            publishResult,
+            "End time must be after the start time.",
+            "error"
+        );
+        return;
+    }
+
+    const data = Object.fromEntries(
+        new FormData(announcementForm).entries()
+    );
+
+    showMessage(
+        publishResult,
+        "Announcement is ready to publish. Connect this action to your backend to display it on the student interface.",
+        "success"
+    );
+
+    updateSteps(3);
+
+    console.log("Announcement data:", data);
+});
+</script>
+
+</body>
+</html>

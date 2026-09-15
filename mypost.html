@@ -1,0 +1,1392 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus Companion | My Posts</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Homepage Theme Palette */
+    --primary: #f44716;         /* Signature Orange */
+    --primary-light: #eadbed;   /* Light Lavender */
+    --text: #142f45;            /* Deep Navy */
+    --muted: #66717a;           /* Editorial Gray */
+    --border: #ded2c5;          /* Warm Cream Border */
+    --background: #f8efe5;      /* Warm Editorial Cream */
+    --white: #fffaf2;           /* Soft Warm White */
+    
+    /* Block Color Accents */
+    --lavender: #c9a8d0;
+    --lavender-light: #eadbed;
+    --mustard: #d09a1c;
+    --mustard-light: #f4e3b0;
+    --orange: #f44716;
+    --orange-light: #ffe1d5;
+    --blue: #c9dfef;
+    --blue-light: #e4f0f7;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    font-size: 14px;
+}
+
+h1, h2, h3, .stat-number, .poster strong {
+    font-family: Georgia, "Playfair Display", serif;
+}
+
+button, input, select {
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* LAYOUT */
+
+.app {
+    min-height: 100vh;
+    display: flex;
+}
+
+.sidebar {
+    width: 255px;
+    background: var(--background);
+    border-right: 1px solid var(--border);
+    padding: 32px 20px;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 0 12px;
+    margin-bottom: 65px;
+}
+
+.brand-icon {
+    font-size: 14px;
+    color: var(--lavender);
+}
+
+.brand h2 {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 20px;
+    color: var(--text);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.brand p {
+    font-size: 10px;
+    color: var(--text);
+    margin-top: 5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.nav a {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 16px;
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--text);
+    font-weight: 500;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.nav a:hover,
+.nav a.active {
+    background: var(--lavender);
+    color: var(--white);
+    transform: translateX(4px);
+}
+
+.nav-icon {
+    font-size: 21px;
+    width: 22px;
+    text-align: center;
+    color: var(--orange);
+}
+
+.sidebar-note {
+    margin: auto 12px 0;
+    padding: 22px;
+    border: none;
+    border-radius: 18px;
+    background: var(--mustard-light);
+    line-height: 1.6;
+}
+
+.sidebar-note h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+.sidebar-note p {
+    color: #59626a;
+    font-size: 13px;
+}
+
+/* MAIN */
+
+.main {
+    flex: 1;
+    min-width: 0;
+}
+
+.topbar {
+    min-height: 86px;
+    background: var(--background);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 30px;
+    gap: 20px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: min(540px, 65%);
+    padding: 13px 17px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search:focus-within {
+    border-color: var(--lavender);
+    box-shadow: 0 0 0 3px rgba(201, 168, 208, 0.18);
+}
+
+.search span {
+    font-size: 20px;
+    color: var(--muted);
+}
+
+.search input {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+}
+
+.search input::placeholder {
+    color: #8b8883;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--orange);
+    color: var(--white);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+}
+
+.profile strong {
+    color: var(--text);
+}
+
+.profile-role {
+    color: #807c76;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* PAGE HEADER */
+
+.content {
+    max-width: 1400px;
+    margin: auto;
+    padding: 35px 30px;
+}
+
+.breadcrumb {
+    color: #77736e;
+    margin-bottom: 12px;
+}
+
+.breadcrumb span {
+    color: var(--orange);
+    font-weight: 600;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 9px;
+    color: var(--text);
+}
+
+.page-header p {
+    color: #77736e;
+    line-height: 1.6;
+}
+
+.primary-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-btn:hover {
+    background: #d93b11;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(244, 71, 22, 0.18);
+}
+
+/* STATISTICS - Tile design matching original homepage boxes */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: var(--white);
+    border: none;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 2px 0 rgba(20, 47, 69, 0.04);
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    font-size: 21px;
+    margin-bottom: 18px;
+    color: var(--white);
+}
+
+.purple {
+    background: var(--lavender);
+}
+
+.green {
+    background: var(--mustard);
+}
+
+.orange {
+    background: var(--orange);
+}
+
+.blue {
+    background: var(--blue);
+    color: var(--text);
+}
+
+.stat-number {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: var(--text);
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* POSTS PANEL */
+
+.panel {
+    background: var(--white);
+    border: none;
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 2px 0 rgba(20, 47, 69, 0.04);
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.panel-heading h2 {
+    font-size: 22px;
+    color: var(--text);
+}
+
+.post-count {
+    font-size: 13px;
+    color: #7b7771;
+    margin-top: 6px;
+}
+
+/* FILTERS */
+
+.filters {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tab {
+    padding: 11px 18px;
+    border: 1px solid transparent;
+    background: var(--background);
+    color: var(--muted);
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.tab.active {
+    background: var(--lavender);
+    color: var(--white);
+}
+
+.filter-select {
+    width: auto;
+    min-width: 165px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--white);
+    color: var(--text);
+    outline: none;
+    font-weight: 500;
+    transition: border-color 0.2s ease;
+}
+
+.filter-select:focus {
+    border-color: var(--orange);
+}
+
+/* POST CARDS */
+
+.post-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.post {
+    display: grid;
+    grid-template-columns: 155px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 24px;
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: #fffdfb;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.post:hover {
+    border-color: var(--lavender);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(20, 47, 69, 0.05);
+}
+
+/* The posters now directly mirror the homepage card blocks */
+.poster {
+    height: 115px;
+    border-radius: 14px;
+    padding: 16px;
+    background: var(--lavender);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.poster small {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    opacity: 0.9;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.poster strong {
+    font-size: 15px;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+    font-weight: 700;
+}
+
+.poster.hackathon {
+    background: var(--orange);
+    color: var(--white);
+}
+
+.poster.community {
+    background: var(--blue);
+    color: var(--text);
+}
+
+.poster.scholarship {
+    background: var(--mustard);
+    color: var(--white);
+}
+
+.post-info {
+    min-width: 0;
+}
+
+.post-title-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.post-info h3 {
+    font-size: 18px;
+    color: var(--text);
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.post-info p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.post-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    color: var(--text);
+    opacity: 0.85;
+    font-size: 12px;
+}
+
+.status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.status.published {
+    background: var(--blue-light);
+    color: #1a6096;
+}
+
+.status.review {
+    background: var(--mustard-light);
+    color: #8c6000;
+}
+
+.status.draft {
+    background: var(--background);
+    color: var(--muted);
+}
+
+.status.unpublished {
+    background: var(--orange-light);
+    color: var(--orange);
+}
+
+/* POST ACTIONS */
+
+.post-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.menu-wrap {
+    position: relative;
+}
+
+.menu-btn {
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--white);
+    color: var(--text);
+    font-size: 21px;
+    display: grid;
+    place-items: center;
+    transition: all 0.2s ease;
+}
+
+.menu-btn:hover {
+    background: var(--background);
+    border-color: var(--lavender);
+}
+
+.menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 44px;
+    width: 175px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 6px;
+    box-shadow: 0 10px 30px rgba(20, 47, 69, 0.08);
+    z-index: 5;
+}
+
+.menu.open {
+    display: block;
+}
+
+.menu button {
+    width: 100%;
+    text-align: left;
+    padding: 11px;
+    border: none;
+    background: var(--white);
+    border-radius: 10px;
+    color: var(--text);
+    font-weight: 500;
+}
+
+.menu button:hover {
+    background: var(--background);
+}
+
+.menu button.delete {
+    color: var(--orange);
+}
+
+.post-date {
+    font-size: 11px;
+    color: #807b75;
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* EMPTY STATE */
+
+.empty-state {
+    display: none;
+    text-align: center;
+    padding: 55px 20px;
+    color: var(--muted);
+}
+
+.empty-state .empty-icon {
+    font-size: 42px;
+    margin-bottom: 15px;
+    color: var(--lavender);
+}
+
+.empty-state h3 {
+    color: var(--text);
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    line-height: 1.6;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1100px) {
+    .sidebar {
+        width: 220px;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 850px) {
+    .sidebar {
+        width: 70px;
+        padding: 20px 8px;
+    }
+
+    .brand {
+        justify-content: center;
+        padding: 0;
+    }
+
+    .brand-text,
+    .nav-label,
+    .sidebar-note {
+        display: none;
+    }
+
+    .nav a {
+        justify-content: center;
+        padding: 14px 5px;
+    }
+
+    .post {
+        grid-template-columns: 120px minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .poster {
+        height: 105px;
+    }
+
+    .post-actions {
+        grid-column: 2;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .post-date {
+        text-align: left;
+    }
+
+    .content {
+        padding: 22px 18px;
+    }
+}
+
+@media (max-width: 550px) {
+    .sidebar {
+        display: none;
+    }
+
+    .topbar {
+        padding: 15px;
+        flex-wrap: wrap;
+    }
+
+    .search {
+        width: 100%;
+        order: 2;
+    }
+
+    .profile {
+        margin-left: auto;
+    }
+
+    .content {
+        padding: 18px 12px;
+    }
+
+    .page-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .page-header h1 {
+        font-size: 26px;
+    }
+
+    .stats {
+        gap: 12px;
+    }
+
+    .stat-card {
+        padding: 16px;
+    }
+
+    .stat-number {
+        font-size: 24px;
+    }
+
+    .panel {
+        padding: 18px;
+    }
+
+    .filters {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .tabs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .filter-select {
+        width: 100%;
+    }
+
+    .post {
+        grid-template-columns: 1fr;
+        padding: 16px;
+    }
+
+    .poster {
+        height: 135px;
+    }
+
+    .post-actions {
+        grid-column: 1;
+    }
+
+    .post-title-row {
+        align-items: flex-start;
+    }
+
+    .post-meta {
+        gap: 10px;
+    }
+}
+
+/* Animations & interactions */
+
+@keyframes pageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content {
+    animation: pageEnter 0.55s ease-out both;
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <span class="brand-icon">⬤</span>
+
+            <div class="brand-text">
+                <h2>Kya</br>Scene</h2>
+                <p>Organization Portal</p>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a href="dashboard.html">
+                <span class="nav-icon">⌂</span>
+                <span class="nav-label">Back to Home</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-note">
+            <h3>Connecting Organizations with Students</h3>
+            <p>Share opportunities. Build a better campus.</p>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="search">
+                
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search your announcements..."
+                    aria-label="Search announcements"
+                >
+            </div>
+
+            <div class="profile">
+                <span style="font-size:23px; color: var(--lavender)">🔔</span>
+
+                <div class="avatar">AM</div>
+
+                <div>
+                    <strong>Assert Merkle IGDTUW</strong>
+                    <div class="profile-role">Organization</div>
+                </div>
+            </div>
+
+        </header>
+
+        <div class="content">
+
+            <div class="breadcrumb">
+                Dashboard / <span>My Posts</span>
+            </div>
+
+            <!-- PAGE HEADER -->
+            <div class="page-header">
+
+                <div>
+                    <h1>My Posts</h1>
+                    <p>
+                        Manage your announcements, track their status
+                        and keep students updated.
+                    </p>
+                </div>
+
+                <a href="announcement.html" class="primary-btn">
+                    ＋ Create Announcement
+                </a>
+
+            </div>
+
+            <!-- STATISTICS -->
+            <section class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">▤</div>
+                    <div class="stat-number" id="totalCount">4</div>
+                    <div class="stat-label">Total Posts</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">✓</div>
+                    <div class="stat-number" id="publishedCount">2</div>
+                    <div class="stat-label">Published</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">◷</div>
+                    <div class="stat-number" id="reviewCount">1</div>
+                    <div class="stat-label">Under Review</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">▣</div>
+                    <div class="stat-number" id="draftCount">1</div>
+                    <div class="stat-label">Drafts</div>
+                </div>
+
+            </section>
+
+            <!-- POSTS PANEL -->
+            <section class="panel">
+
+                <div class="panel-heading">
+                    <div>
+                        <h2>All Announcements</h2>
+                        <p class="post-count" id="postCount">
+                            Showing 4 announcements
+                        </p>
+                    </div>
+                </div>
+
+                <!-- FILTERS -->
+                <div class="filters">
+
+                    <div class="tabs" role="group" aria-label="Filter by status">
+
+                        <button class="tab active" data-status="All">
+                            All Posts
+                        </button>
+
+                        <button class="tab" data-status="Published">
+                            Published
+                        </button>
+
+                        <button class="tab" data-status="Under Review">
+                            Under Review
+                        </button>
+
+                        <button class="tab" data-status="Draft">
+                            Drafts
+                        </button>
+
+                    </div>
+
+                    <select id="categoryFilter" class="filter-select"
+                            aria-label="Filter by category">
+
+                        <option value="All">All Categories</option>
+                        <option value="Workshop">Workshop</option>
+                        <option value="Hackathon">Hackathon</option>
+                        <option value="Drive">Drive</option>
+                        <option value="Scholarship">Scholarship</option>
+
+                    </select>
+
+                </div>
+
+                <!-- ANNOUNCEMENT LIST -->
+                <div class="post-list" id="postList">
+
+                    <!-- POST 1 -->
+                    <article class="post"
+                        data-id="1"
+                        data-status="Published"
+                        data-category="Workshop">
+
+                        <div class="poster">
+                            <small>Assert Merkle IGDTUW</small>
+                            <strong>WEB DEVELOPMENT WORKSHOP</strong>
+                        </div>
+
+                        <div class="post-info">
+
+                            <div class="post-title-row">
+                                <h3>Web Development Workshop</h3>
+                                <span class="status published">Published</span>
+                            </div>
+
+                            <p>Assert Merkle IGDTUW · Workshop</p>
+
+                            <div class="post-meta">
+                                <span>▣ 18 Sept 2025</span>
+                                <span>⌖ LT-2, IGDTUW</span>
+                                <span>♙ 124 registrations</span>
+                            </div>
+
+                        </div>
+
+                        <div class="post-actions">
+
+                            <div class="menu-wrap">
+                                <button class="menu-btn" aria-label="Post options"
+                                        aria-expanded="false">⋯</button>
+
+                                <div class="menu">
+                                    <button data-action="edit">Edit Post</button>
+                                    <button data-action="unpublish">Unpublish</button>
+                                    <button data-action="delete" class="delete">
+                                        Delete Post
+                                    </button>
+                                </div>
+                            </div>
+
+                            <span class="post-date">Posted 12 Sept 2025</span>
+
+                        </div>
+
+                    </article>
+
+                    <!-- POST 2 -->
+                    <article class="post"
+                        data-id="2"
+                        data-status="Published"
+                        data-category="Hackathon">
+
+                        <div class="poster hackathon">
+                            <small>Assert Merkle IGDTUW</small>
+                            <strong>TECH FOR GOOD HACKATHON</strong>
+                        </div>
+
+                        <div class="post-info">
+
+                            <div class="post-title-row">
+                                <h3>Tech for Good Hackathon</h3>
+                                <span class="status published">Published</span>
+                            </div>
+
+                            <p>Assert Merkle IGDTUW · Hackathon</p>
+
+                            <div class="post-meta">
+                                <span>▣ 25 Sept 2025</span>
+                                <span>⌖ Seminar Hall, IGDTUW</span>
+                                <span>♙ 86 registrations</span>
+                            </div>
+
+                        </div>
+
+                        <div class="post-actions">
+
+                            <div class="menu-wrap">
+                                <button class="menu-btn" aria-label="Post options"
+                                        aria-expanded="false">⋯</button>
+
+                                <div class="menu">
+                                    <button data-action="edit">Edit Post</button>
+                                    <button data-action="unpublish">Unpublish</button>
+                                    <button data-action="delete" class="delete">
+                                        Delete Post
+                                    </button>
+                                </div>
+                            </div>
+
+                            <span class="post-date">Posted 10 Sept 2025</span>
+
+                        </div>
+
+                    </article>
+
+                    <!-- POST 3 -->
+                    <article class="post"
+                        data-id="4"
+                        data-status="Draft"
+                        data-category="Scholarship">
+
+                        <div class="poster scholarship">
+                            <small>Assert Merkle IGDTUW</small>
+                            <strong>SCHOLARSHIP OPPORTUNITY</strong>
+                        </div>
+
+                        <div class="post-info">
+
+                            <div class="post-title-row">
+                                <h3>Scholarship Opportunity</h3>
+                                <span class="status draft">Draft</span>
+                            </div>
+
+                            <p>Assert Merkle IGDTUW · Scholarship</p>
+
+                            <div class="post-meta">
+                                <span>▣ Date not set</span>
+                                <span>⌖ Location not set</span>
+                            </div>
+
+                        </div>
+
+                        <div class="post-actions">
+
+                            <div class="menu-wrap">
+                                <button class="menu-btn" aria-label="Post options"
+                                        aria-expanded="false">⋯</button>
+
+                                <div class="menu">
+                                    <button data-action="edit">Edit Post</button>
+                                    <button data-action="publish">Publish</button>
+                                    <button data-action="delete" class="delete">
+                                        Delete Post
+                                    </button>
+                                </div>
+                            </div>
+
+                            <span class="post-date">Last edited 6 Sept 2025</span>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+                <!-- EMPTY STATE -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-icon">▤</div>
+                    <h3>No announcements found</h3>
+                    <p>Try changing your search or filters.</p>
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+
+/* FILTER STATE */
+
+let activeStatus = "All";
+
+const postList = document.getElementById("postList");
+const searchInput = document.getElementById("searchInput");
+const categoryFilter = document.getElementById("categoryFilter");
+
+function getPosts() {
+    return [...document.querySelectorAll(".post")];
+}
+
+/* UPDATE STATISTICS */
+
+function updateStats() {
+    const posts = getPosts();
+
+    const count = status =>
+        posts.filter(post => post.dataset.status === status).length;
+
+    document.getElementById("totalCount").textContent = posts.length;
+    document.getElementById("publishedCount").textContent =
+        count("Published");
+
+    document.getElementById("reviewCount").textContent =
+        count("Under Review");
+
+    document.getElementById("draftCount").textContent =
+        count("Draft");
+}
+
+/* FILTER POSTS */
+
+function filterPosts() {
+    const query = searchInput.value.toLowerCase().trim();
+    const category = categoryFilter.value;
+
+    let visibleCount = 0;
+
+    getPosts().forEach(post => {
+        const statusMatch =
+            activeStatus === "All" ||
+            post.dataset.status === activeStatus;
+
+        const categoryMatch =
+            category === "All" ||
+            post.dataset.category === category;
+
+        const searchMatch =
+            post.innerText.toLowerCase().includes(query);
+
+        const visible =
+            statusMatch && categoryMatch && searchMatch;
+
+        post.style.display = visible ? "grid" : "none";
+
+        if (visible) visibleCount++;
+    });
+
+    document.getElementById("postCount").textContent =
+        `Showing ${visibleCount} announcement${visibleCount === 1 ? "" : "s"}`;
+
+    document.getElementById("emptyState").style.display =
+        visibleCount === 0 ? "block" : "none";
+}
+
+searchInput.addEventListener("input", filterPosts);
+categoryFilter.addEventListener("change", filterPosts);
+
+/* STATUS TABS */
+
+document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(item => {
+            item.classList.remove("active");
+        });
+
+        tab.classList.add("active");
+
+        activeStatus = tab.dataset.status;
+
+        filterPosts();
+    });
+});
+
+/* OPEN AND CLOSE MENUS */
+
+document.addEventListener("click", event => {
+    const menuButton = event.target.closest(".menu-btn");
+
+    document.querySelectorAll(".menu").forEach(menu => {
+        if (!menuButton || !menu.contains(menuButton)) {
+            menu.classList.remove("open");
+
+            const button = menu.parentElement.querySelector(".menu-btn");
+            if (button) button.setAttribute("aria-expanded", "false");
+        }
+    });
+
+    if (menuButton) {
+        const menu = menuButton.nextElementSibling;
+        const isOpen = menu.classList.toggle("open");
+
+        menuButton.setAttribute("aria-expanded", String(isOpen));
+    }
+});
+
+/* POST ACTIONS */
+
+postList.addEventListener("click", event => {
+    const button = event.target.closest("[data-action]");
+
+    if (!button) return;
+
+    const post = button.closest(".post");
+    const action = button.dataset.action;
+
+    if (action === "delete") {
+        const confirmed = confirm(
+            "Are you sure you want to delete this announcement?"
+        );
+
+        if (!confirmed) return;
+
+        post.remove();
+
+        updateStats();
+        filterPosts();
+
+        return;
+    }
+
+    if (action === "unpublish") {
+        const confirmed = confirm(
+            "Unpublish this announcement? Students will no longer see it."
+        );
+
+        if (!confirmed) return;
+
+        post.dataset.status = "Unpublished";
+
+        updatePostStatus(post);
+        updateStats();
+        filterPosts();
+
+        return;
+    }
+
+    if (action === "publish") {
+        const confirmed = confirm(
+            "Publish this announcement?"
+        );
+
+        if (!confirmed) return;
+
+        post.dataset.status = "Published";
+
+        updatePostStatus(post);
+        updateStats();
+        filterPosts();
+
+        return;
+    }
+
+    if (action === "edit") {
+        const title = post.querySelector(".post-info h3").textContent;
+
+        alert(
+            "Edit Announcement: " + title +
+            "\n\nConnect this action to announcement.html " +
+            "with the selected post's ID."
+        );
+    }
+});
+
+/* UPDATE STATUS BADGE AND MENU */
+
+function updatePostStatus(post) {
+    const status = post.dataset.status;
+    const badge = post.querySelector(".status");
+    const menu = post.querySelector(".menu");
+
+    badge.textContent = status;
+    badge.className = "status";
+
+    if (status === "Published") {
+        badge.classList.add("published");
+
+        menu.innerHTML = `
+            <button data-action="edit">Edit Post</button>
+            <button data-action="unpublish">Unpublish</button>
+            <button data-action="delete" class="delete">Delete Post</button>
+        `;
+    }
+
+    if (status === "Unpublished") {
+        badge.classList.add("unpublished");
+
+        menu.innerHTML = `
+            <button data-action="edit">Edit Post</button>
+            <button data-action="publish">Republish</button>
+            <button data-action="delete" class="delete">Delete Post</button>
+        `;
+    }
+
+    if (status === "Draft") {
+        badge.classList.add("draft");
+    }
+}
+
+/* INITIALIZE */
+
+updateStats();
+filterPosts();
+
+</script>
+
+</body>
+</html>
+```

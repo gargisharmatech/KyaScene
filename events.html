@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Event Calendar | Campus Companion</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap"
+    rel="stylesheet"
+>
+
+<style>
+:root {
+    --page-bg: #F7EFE5;
+    --surface: #FFFBF5;
+    --surface-soft: #FBF5ED;
+
+    --primary: #FC4318;
+    --primary-hover: #E83A12;
+    --primary-light: #FFF0EA;
+
+    --lavender: #C9A2D4;
+    --lavender-dark: #9B73A8;
+    --lavender-light: #EFE4F2;
+
+    --gold: #D49B10;
+    --gold-light: #F5E7BA;
+
+    --blue: #CBE3F2;
+    --blue-dark: #335E77;
+
+    --ink: #173246;
+    --text: #4D565D;
+    --muted: #7D7873;
+
+    --line: #E5D6C7;
+    --line-light: #EFE5DA;
+
+    --shadow: 0 2px 8px rgba(69, 47, 33, 0.035);
+    --shadow-hover: 0 7px 22px rgba(69, 47, 33, 0.08);
+
+    --radius: 20px;
+    --radius-small: 13px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    color-scheme: light;
+}
+
+body {
+    min-width: 320px;
+    margin: 0;
+    background: var(--page-bg);
+    color: var(--text);
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* ==============================
+   APPLICATION LAYOUT
+================================ */
+
+.app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 228px minmax(0, 1fr);
+    background: var(--page-bg);
+}
+
+/* ==============================
+   SIDEBAR
+================================ */
+
+.sidebar {
+    min-height: 100vh;
+    padding: 17px 20px 26px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid var(--line);
+    background: var(--page-bg);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 0 0 70px;
+}
+
+.brand-mark {
+    width: 10px;
+    height: 10px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--lavender);
+}
+
+.brand h1 {
+    margin: 0;
+    color: var(--ink);
+    font-family: "Inter", Arial, sans-serif;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.brand p {
+    margin-top: 5px;
+    color: var(--text);
+    font-size: 9px;
+    line-height: 1.4;
+    letter-spacing: 1.7px;
+    text-transform: uppercase;
+}
+
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 5px;
+    border-radius: 10px;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.nav-link svg {
+    width: 18px;
+    height: 18px;
+    color: var(--primary);
+    flex: 0 0 auto;
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+    color: var(--primary);
+    background: rgba(255, 255, 255, 0.35);
+    outline: none;
+}
+
+/* ==============================
+   MAIN AND TOP BAR
+================================ */
+
+.main {
+    min-width: 0;
+}
+
+.topbar {
+    min-height: 70px;
+    padding: 8px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    border-bottom: 1px solid var(--line);
+    background: var(--page-bg);
+}
+
+.search {
+    position: relative;
+    width: min(506px, 56%);
+}
+
+.search input {
+    width: 100%;
+    height: 52px;
+    padding: 0 20px 0 46px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    outline: none;
+    background: var(--surface);
+    color: var(--ink);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.search input::placeholder {
+    color: #8C8580;
+}
+
+.search input:focus {
+    border-color: var(--lavender-dark);
+    box-shadow: 0 0 0 3px rgba(201, 162, 212, 0.16);
+}
+
+.search svg {
+    position: absolute;
+    top: 50%;
+    left: 17px;
+    width: 17px;
+    height: 17px;
+    color: var(--ink);
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.notification-btn {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--lavender-dark);
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.notification-btn:hover {
+    color: var(--primary);
+    background: var(--surface);
+}
+
+.notification-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.user-info strong {
+    display: block;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.user-info small {
+    display: block;
+    margin-top: 1px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+/* ==============================
+   CONTENT HEADER
+================================ */
+
+.content {
+    width: min(1256px, calc(100% - 56px));
+    margin: 0 auto;
+    padding: 34px 0 42px;
+}
+
+.breadcrumb {
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.breadcrumb span {
+    color: var(--primary);
+    font-weight: 600;
+}
+
+.page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 27px;
+}
+
+.page-heading h2 {
+    margin: 0 0 5px;
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: clamp(30px, 3vw, 36px);
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.page-heading p {
+    max-width: 700px;
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.primary-btn {
+    min-height: 42px;
+    padding: 11px 23px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    white-space: nowrap;
+    transition:
+        background 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.primary-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 5px 15px rgba(252, 67, 24, 0.22);
+    transform: translateY(-1px);
+}
+
+.primary-btn:focus-visible {
+    outline: 3px solid rgba(252, 67, 24, 0.2);
+    outline-offset: 2px;
+}
+
+/* ==============================
+   CONTENT LAYOUT
+================================ */
+
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(310px, 0.95fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.left-column {
+    min-width: 0;
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--line-light);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+/* ==============================
+   CALENDAR
+================================ */
+
+.calendar-panel {
+    padding: 24px 22px 22px;
+}
+
+.calendar-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 21px;
+}
+
+.month-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.month-controls h3 {
+    min-width: 210px;
+    margin: 0;
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.icon-btn {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface-soft);
+    color: var(--ink);
+    font-size: 22px;
+    line-height: 1;
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.icon-btn:hover {
+    border-color: var(--lavender);
+    background: var(--lavender-light);
+    color: var(--lavender-dark);
+}
+
+.view-toggle {
+    display: flex;
+    gap: 3px;
+    padding: 4px;
+    border-radius: 12px;
+    background: #F3EDE6;
+}
+
+.view-toggle button {
+    min-width: 60px;
+    padding: 8px 11px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #61707B;
+    font-size: 12px;
+    font-weight: 500;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.view-toggle button:hover {
+    color: var(--ink);
+}
+
+.view-toggle button.active {
+    background: var(--lavender);
+    color: white;
+    font-weight: 600;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 7px;
+}
+
+.weekday {
+    padding: 7px 0;
+    color: #68747C;
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.day {
+    position: relative;
+    min-height: 74px;
+    padding: 9px 4px;
+    border: 1px solid var(--line-light);
+    border-radius: 11px;
+    background: #FFFEFB;
+    color: var(--ink);
+    text-align: center;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.day:hover {
+    border-color: var(--lavender);
+    background: var(--surface-soft);
+    transform: translateY(-1px);
+}
+
+.day.empty {
+    cursor: default;
+    background: rgba(247, 239, 229, 0.5);
+}
+
+.day.empty:hover {
+    border-color: var(--line-light);
+    transform: none;
+}
+
+.day-number {
+    width: 31px;
+    height: 31px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.day.has-events .day-number {
+    background: var(--event-bg, var(--blue));
+    color: var(--event-text, var(--ink));
+    font-weight: 700;
+}
+
+.day .dot {
+    display: block;
+    width: 6px;
+    height: 6px;
+    margin: 5px auto 0;
+    border-radius: 50%;
+    background: var(--event-color, var(--lavender-dark));
+}
+
+.day.selected {
+    border-color: var(--lavender-dark);
+    box-shadow: inset 0 0 0 1px var(--lavender-dark);
+}
+
+.day.today .day-number {
+    border: 1px solid var(--primary);
+}
+
+.week-list {
+    display: grid;
+    gap: 8px;
+}
+
+.week-day {
+    padding: 13px 15px;
+    border: 1px solid var(--line-light);
+    border-radius: 12px;
+    background: #FFFEFB;
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+.week-day:hover {
+    border-color: var(--lavender);
+    background: var(--surface-soft);
+}
+
+.week-day strong {
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+}
+
+.week-day p {
+    margin: 5px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* ==============================
+   UPCOMING EVENTS
+================================ */
+
+.upcoming-panel {
+    padding: 22px 17px 17px;
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 5px 16px;
+    border-bottom: 1px solid var(--line-light);
+}
+
+.panel-heading h3 {
+    margin: 0;
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.text-btn {
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.text-btn:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+.event-list {
+    display: grid;
+    gap: 10px;
+    padding-top: 12px;
+}
+
+.event-card {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) 24px;
+    gap: 13px;
+    align-items: center;
+    padding: 11px;
+    border: 1px solid var(--line);
+    border-radius: 15px;
+    background: #FFFEFB;
+    transition:
+        box-shadow 0.2s ease,
+        transform 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.event-card:hover {
+    border-color: #DCCABB;
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+}
+
+.date-box {
+    min-height: 81px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: var(--event-bg, var(--blue));
+    color: var(--event-text, var(--ink));
+}
+
+.date-box strong {
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.date-box span {
+    margin-top: 5px;
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.event-info {
+    min-width: 0;
+}
+
+.event-info h4 {
+    margin: 0 0 6px;
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+
+.event-info p {
+    margin: 3px 0;
+    color: #68747C;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.tag {
+    display: inline-block;
+    margin-top: 5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: var(--event-bg, var(--blue));
+    color: var(--event-text, var(--ink));
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.event-actions {
+    display: grid;
+    gap: 4px;
+}
+
+.event-actions button {
+    width: 24px;
+    height: 24px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 17px;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease;
+}
+
+.event-actions button:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+.empty-state {
+    padding: 28px 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    text-align: center;
+}
+
+/* ==============================
+   UPDATE BANNER
+================================ */
+
+.banner {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 17px;
+    padding: 20px 22px;
+    border: 1px solid #EADAB0;
+    border-radius: var(--radius);
+    background: #FFF2CF;
+}
+
+.banner-icon {
+    width: 65px;
+    flex: 0 0 auto;
+}
+
+.banner h3 {
+    margin: 0 0 5px;
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.banner p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.banner .text-btn {
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+/* ==============================
+   EVENT DIALOG
+================================ */
+
+dialog {
+    width: min(520px, calc(100% - 28px));
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: 0 18px 60px rgba(31, 32, 35, 0.2);
+}
+
+dialog::backdrop {
+    background: rgba(24, 38, 48, 0.32);
+    backdrop-filter: blur(2px);
+}
+
+.dialog-inner {
+    padding: 25px;
+}
+
+.dialog-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.dialog-head h3 {
+    margin: 0;
+    color: var(--ink);
+    font-family: "Playfair Display", Georgia, serif;
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.close-btn {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--muted);
+    font-size: 25px;
+    line-height: 1;
+}
+
+.close-btn:hover {
+    background: var(--surface-soft);
+    color: var(--primary);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.field {
+    display: grid;
+    gap: 7px;
+    min-width: 0;
+}
+
+.field.full {
+    grid-column: 1 / -1;
+}
+
+.field label {
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    outline: none;
+    background: var(--surface-soft);
+    color: var(--text);
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(252, 67, 24, 0.1);
+}
+
+.field textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.dialog-button-group {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.secondary-btn,
+.delete-btn {
+    padding: 10px 15px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.secondary-btn:hover {
+    background: var(--surface-soft);
+    border-color: #D4C3B3;
+}
+
+.delete-btn {
+    border-color: #E6A897;
+    color: #B7351D;
+}
+
+.delete-btn:hover {
+    background: #FFF0EA;
+}
+
+.form-message {
+    min-height: 18px;
+    margin: 10px 0 0;
+    color: #B7351D;
+    font-size: 12px;
+}
+
+/* ==============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 1100px) {
+    .app {
+        grid-template-columns: 205px minmax(0, 1fr);
+    }
+
+    .brand h1 {
+        font-size: 17px;
+        letter-spacing: 3px;
+    }
+
+    .content {
+        width: min(900px, calc(100% - 40px));
+    }
+
+    .layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .event-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 800px) {
+    .app {
+        grid-template-columns: 76px minmax(0, 1fr);
+    }
+
+    .sidebar {
+        align-items: center;
+        padding: 20px 10px;
+    }
+
+    .brand {
+        justify-content: center;
+        margin-bottom: 45px;
+    }
+
+    .brand-mark {
+        width: 12px;
+        height: 12px;
+    }
+
+    .brand > div,
+    .nav-label {
+        display: none;
+    }
+
+    .nav-link {
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        padding: 0;
+    }
+
+    .nav-link svg {
+        width: 21px;
+        height: 21px;
+    }
+
+    .topbar {
+        padding: 9px 18px;
+    }
+
+    .search {
+        width: min(460px, 70%);
+    }
+
+    .user-info {
+        display: none;
+    }
+
+    .content {
+        width: calc(100% - 32px);
+        padding-top: 25px;
+    }
+
+    .page-heading {
+        align-items: flex-start;
+    }
+
+    .calendar-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .month-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .month-controls h3 {
+        min-width: 0;
+    }
+
+    .view-toggle {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 600px) {
+    .app {
+        display: block;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .topbar {
+        flex-wrap: wrap;
+        padding: 12px 14px;
+    }
+
+    .search {
+        width: calc(100% - 100px);
+    }
+
+    .notification-btn {
+        display: none;
+    }
+
+    .content {
+        width: calc(100% - 28px);
+        padding: 22px 0 30px;
+    }
+
+    .page-heading {
+        flex-direction: column;
+    }
+
+    .page-heading .primary-btn {
+        width: 100%;
+    }
+
+    .calendar-panel {
+        padding: 16px 10px;
+    }
+
+    .calendar-grid {
+        gap: 4px;
+    }
+
+    .weekday {
+        font-size: 9px;
+    }
+
+    .day {
+        min-height: 55px;
+        padding: 6px 1px;
+        border-radius: 8px;
+    }
+
+    .day-number {
+        width: 27px;
+        height: 27px;
+        font-size: 12px;
+    }
+
+    .view-toggle {
+        width: 100%;
+    }
+
+    .view-toggle button {
+        flex: 1;
+    }
+
+    .event-list {
+        grid-template-columns: 1fr;
+    }
+
+    .banner {
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+
+    .banner-icon {
+        width: 48px;
+    }
+
+    .banner .text-btn {
+        width: 100%;
+        margin-left: 0;
+        text-align: left;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field.full {
+        grid-column: auto;
+    }
+
+    .dialog-actions {
+        flex-direction: column;
+    }
+
+    .dialog-button-group {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .dialog-button-group button {
+        flex: 1;
+    }
+}
+
+@media (max-width: 400px) {
+    .search {
+        width: calc(100% - 54px);
+    }
+
+    .user {
+        gap: 0;
+    }
+
+    .month-controls h3 {
+        font-size: 18px;
+    }
+
+    .calendar-panel {
+        padding-inline: 7px;
+    }
+
+    .event-card {
+        grid-template-columns: 64px minmax(0, 1fr) 22px;
+        gap: 9px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+        animation: none !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <span class="brand-mark" aria-hidden="true"></span>
+
+            <div>
+                <h1>KYA<br>SCENE</h1>
+                <p>Organization Portal</p>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <a class="nav-link" href="dashboard.html">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                >
+                    <path d="m3 10 9-7 9 7v11h-6v-7H9v7H3z"/>
+                </svg>
+
+                <span class="nav-label">Back to Home</span>
+            </a>
+        </nav>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="search">
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    aria-hidden="true"
+                >
+                    <circle cx="10.8" cy="10.8" r="7.3"/>
+                    <path d="m16.2 16.2 5 5"/>
+                </svg>
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="Search your events..."
+                    aria-label="Search events"
+                >
+            </div>
+
+            <div class="user">
+
+                <button
+                    type="button"
+                    class="notification-btn"
+                    aria-label="View notifications"
+                    title="Notifications"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        aria-hidden="true"
+                    >
+                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/>
+                        <path d="M10 21h4"/>
+                    </svg>
+                </button>
+
+                <div class="avatar">AM</div>
+
+                <div class="user-info">
+                    <strong>Assert Merkle IGDTUW</strong>
+                    <small>Organization</small>
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- PAGE CONTENT -->
+        <section class="content">
+
+            <div class="page-heading">
+
+                <div>
+                    <div class="breadcrumb">
+                        Dashboard / <span>Event Calendar</span>
+                    </div>
+
+                    <h2>Event Calendar</h2>
+
+                    <p>
+                        Discover exciting events, workshops and opportunities
+                        happening across campus. Stay engaged and never miss out.
+                    </p>
+                </div>
+
+                <button class="primary-btn" id="addEventBtn">
+                    ＋ Add Event
+                </button>
+
+            </div>
+
+            <div class="layout">
+
+                <!-- LEFT COLUMN -->
+                <div class="left-column">
+
+                    <section class="panel calendar-panel">
+
+                        <div class="calendar-toolbar">
+
+                            <div class="month-controls">
+
+                                <button
+                                    class="icon-btn"
+                                    id="prevMonth"
+                                    aria-label="Previous month"
+                                >
+                                    ‹
+                                </button>
+
+                                <h3 id="monthLabel">September 2026</h3>
+
+                                <button
+                                    class="icon-btn"
+                                    id="nextMonth"
+                                    aria-label="Next month"
+                                >
+                                    ›
+                                </button>
+
+                            </div>
+
+                            <div class="view-toggle" aria-label="Calendar view">
+                                <button class="active" data-view="month">
+                                    Month
+                                </button>
+
+                                <button data-view="week">
+                                    Week
+                                </button>
+
+                                <button data-view="day">
+                                    Day
+                                </button>
+                            </div>
+
+                        </div>
+
+                        <div
+                            id="calendar"
+                            class="calendar-grid"
+                            aria-label="Calendar"
+                        ></div>
+
+                    </section>
+
+                    <section class="banner">
+
+                        <svg
+                            class="banner-icon"
+                            viewBox="0 0 90 90"
+                            aria-hidden="true"
+                        >
+                            <path d="M12 28h22v30H12z" fill="#FC4318"/>
+                            <path d="M34 25 65 11q7-2 7 6v52q0 8-7 6L34 61z" fill="#C9A2D4"/>
+                            <path d="M64 11q9-3 9 7v50q0 10-9 7z" fill="#FC4318"/>
+                            <path d="M23 58h12l9 21H29z" fill="#9B73A8"/>
+                            <path
+                                d="m76 26 10-6m-9 22h11m-12 17 9 6"
+                                stroke="#9B73A8"
+                                stroke-width="3"
+                                stroke-linecap="round"
+                            />
+                            <path
+                                d="m12 12 3 7 8 3-8 3-3 8-3-8-8-3 8-3z"
+                                fill="#F5E7BA"
+                            />
+                        </svg>
+
+                        <div>
+                            <h3>Stay Updated!</h3>
+
+                            <p>
+                                Follow your favourite organizations and never
+                                miss an important event or announcement.
+                            </p>
+                        </div>
+
+                        <button class="text-btn" id="exploreBtn">
+                            Explore Organizations →
+                        </button>
+
+                    </section>
+
+                </div>
+
+                <!-- UPCOMING EVENTS -->
+                <section class="panel upcoming-panel">
+
+                    <div class="panel-heading">
+                        <h3>Upcoming Events</h3>
+
+                        <button class="text-btn" id="viewAllBtn">
+                            View All →
+                        </button>
+                    </div>
+
+                    <div class="event-list" id="eventList"></div>
+
+                </section>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<!-- EVENT DIALOG -->
+<dialog id="eventDialog">
+
+    <form id="eventForm" class="dialog-inner">
+
+        <div class="dialog-head">
+            <h3 id="dialogTitle">Add Event</h3>
+
+            <button
+                class="close-btn"
+                type="button"
+                id="closeDialog"
+                aria-label="Close"
+            >
+                ×
+            </button>
+        </div>
+
+        <div class="form-grid">
+
+            <div class="field full">
+                <label for="eventTitle">Event title *</label>
+
+                <input
+                    id="eventTitle"
+                    required
+                    maxlength="100"
+                    placeholder="e.g. Web Development Workshop"
+                >
+            </div>
+
+            <div class="field">
+                <label for="eventDate">Date *</label>
+                <input id="eventDate" type="date" required>
+            </div>
+
+            <div class="field">
+                <label for="eventCategory">Category</label>
+
+                <select id="eventCategory">
+                    <option>Workshop</option>
+                    <option>Hackathon</option>
+                    <option>Academic</option>
+                    <option>Cultural</option>
+                    <option>Sports</option>
+                    <option>Other</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="eventStart">Start time</label>
+                <input id="eventStart" type="time">
+            </div>
+
+            <div class="field">
+                <label for="eventEnd">End time</label>
+                <input id="eventEnd" type="time">
+            </div>
+
+            <div class="field full">
+                <label for="eventLocation">Location</label>
+
+                <input
+                    id="eventLocation"
+                    maxlength="120"
+                    placeholder="e.g. Seminar Hall, IGDTUW"
+                >
+            </div>
+
+            <div class="field full">
+                <label for="eventDescription">
+                    Description (optional)
+                </label>
+
+                <textarea
+                    id="eventDescription"
+                    maxlength="500"
+                    placeholder="Add a short event description..."
+                ></textarea>
+            </div>
+
+        </div>
+
+        <p
+            class="form-message"
+            id="formMessage"
+            aria-live="polite"
+        ></p>
+
+        <div class="dialog-actions">
+
+            <button
+                type="button"
+                class="delete-btn"
+                id="deleteEventBtn"
+                hidden
+            >
+                Delete event
+            </button>
+
+            <div class="dialog-button-group">
+
+                <button
+                    type="button"
+                    class="secondary-btn"
+                    id="cancelDialog"
+                >
+                    Cancel
+                </button>
+
+                <button type="submit" class="primary-btn">
+                    Save Event
+                </button>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</dialog>
+
+<script>
+(() => {
+    const STORAGE_KEY = "campusCompanionEvents";
+
+    const colors = {
+        Workshop: ["#CBE3F2", "#335E77"],
+        Hackathon: ["#F5E7BA", "#805E0A"],
+        Academic: ["#F5E7BA", "#805E0A"],
+        Cultural: ["#C9A2D4", "#684A70"],
+        Sports: ["#CBE3F2", "#335E77"],
+        Other: ["#F6D4C9", "#9A462F"]
+    };
+
+    const initialEvents = [
+        {
+            id: "seed-workshop",
+            title: "Web Development Workshop",
+            date: "2026-09-18",
+            start: "16:00",
+            end: "18:00",
+            location: "LT-2, IGDTUW",
+            category: "Workshop",
+            description: ""
+        },
+        {
+            id: "seed-hackathon",
+            title: "Tech for Good Hackathon",
+            date: "2026-09-25",
+            start: "09:00",
+            end: "18:00",
+            location: "Seminar Hall, IGDTUW",
+            category: "Hackathon",
+            description: ""
+        }
+    ];
+
+    const $ = id => document.getElementById(id);
+
+    const dialog = $("eventDialog");
+    const form = $("eventForm");
+    const calendar = $("calendar");
+    const eventList = $("eventList");
+
+    let events = loadEvents();
+    let currentMonth = new Date(2026, 8, 1);
+    let selectedDate = "";
+    let editingId = null;
+    let view = "month";
+
+    function loadEvents() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+
+            return saved
+                ? JSON.parse(saved)
+                : initialEvents.slice();
+        } catch {
+            return initialEvents.slice();
+        }
+    }
+
+    function saveEvents() {
+        try {
+            localStorage.setItem(
+                STORAGE_KEY,
+                JSON.stringify(events)
+            );
+        } catch {
+            $("formMessage").textContent =
+                "Could not save in this browser. Your changes may not persist.";
+        }
+    }
+
+    function dateString(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    }
+
+    function parseDate(value) {
+        const [year, month, day] = value
+            .split("-")
+            .map(Number);
+
+        return new Date(year, month - 1, day);
+    }
+
+    function formatTime(value) {
+        if (!value) return "";
+
+        const [hours, minutes] = value
+            .split(":")
+            .map(Number);
+
+        const suffix = hours >= 12 ? "PM" : "AM";
+        const formattedHour = hours % 12 || 12;
+
+        return `${formattedHour}:${String(minutes).padStart(2, "0")} ${suffix}`;
+    }
+
+    function timeRange(event) {
+        if (!event.start && !event.end) {
+            return "Time not specified";
+        }
+
+        if (event.start && event.end) {
+            return `${formatTime(event.start)} – ${formatTime(event.end)}`;
+        }
+
+        return formatTime(event.start || event.end);
+    }
+
+    function escapeHTML(value = "") {
+        return String(value).replace(
+            /[&<>"']/g,
+            character => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[character]
+        );
+    }
+
+    function eventsOn(date) {
+        return events
+            .filter(event => event.date === date)
+            .sort(
+                (a, b) =>
+                    (a.start || "").localeCompare(b.start || "")
+            );
+    }
+
+    function eventStyle(event) {
+        const [background, text] =
+            colors[event.category] || colors.Other;
+
+        return [
+            `--event-bg:${background}`,
+            `--event-text:${text}`,
+            `--event-color:${text}`
+        ].join(";");
+    }
+
+    function renderCalendar() {
+        const year = currentMonth.getFullYear();
+        const month = currentMonth.getMonth();
+
+        $("monthLabel").textContent =
+            currentMonth.toLocaleDateString(
+                "en-US",
+                {
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+        calendar.innerHTML = "";
+
+        if (view === "week" || view === "day") {
+            renderShortView(year, month);
+            return;
+        }
+
+        [
+            "Sun",
+            "Mon",
+            "Tue",
+            "Wed",
+            "Thu",
+            "Fri",
+            "Sat"
+        ].forEach(day => {
+            const heading = document.createElement("div");
+
+            heading.className = "weekday";
+            heading.textContent = day;
+
+            calendar.appendChild(heading);
+        });
+
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth =
+            new Date(year, month + 1, 0).getDate();
+
+        for (let i = 0; i < firstDay; i++) {
+            const blank = document.createElement("div");
+
+            blank.className = "day empty";
+            blank.setAttribute("aria-hidden", "true");
+
+            calendar.appendChild(blank);
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const date = dateString(
+                new Date(year, month, day)
+            );
+
+            const dayEvents = eventsOn(date);
+            const cell = document.createElement("button");
+
+            cell.type = "button";
+            cell.className = "day";
+
+            if (dayEvents.length) {
+                cell.classList.add("has-events");
+                cell.style.cssText = eventStyle(dayEvents[0]);
+            }
+
+            if (date === selectedDate) {
+                cell.classList.add("selected");
+            }
+
+            if (date === dateString(new Date())) {
+                cell.classList.add("today");
+            }
+
+            cell.innerHTML =
+                `<span class="day-number">${day}</span>` +
+                (
+                    dayEvents.length
+                        ? `<span class="dot" aria-label="${dayEvents.length} event(s)"></span>`
+                        : ""
+                );
+
+            cell.setAttribute(
+                "aria-label",
+                `${date}${
+                    dayEvents.length
+                        ? `, ${dayEvents.length} event(s)`
+                        : ""
+                }`
+            );
+
+            cell.addEventListener("click", () => {
+                selectedDate = date;
+                renderCalendar();
+
+                if (dayEvents.length) {
+                    renderEvents(dayEvents);
+                } else {
+                    openEditor(date);
+                }
+            });
+
+            cell.addEventListener(
+                "dblclick",
+                () => openEditor(date)
+            );
+
+            calendar.appendChild(cell);
+        }
+    }
+
+    function renderShortView(year, month) {
+        const first = new Date(year, month, 1);
+
+        let start;
+        let end;
+
+        if (view === "day") {
+            const chosen = selectedDate
+                ? parseDate(selectedDate)
+                : first;
+
+            start = chosen;
+            end = chosen;
+        } else {
+            const chosen = selectedDate
+                ? parseDate(selectedDate)
+                : first;
+
+            start = new Date(chosen);
+            start.setDate(
+                chosen.getDate() - chosen.getDay()
+            );
+
+            end = new Date(start);
+            end.setDate(start.getDate() + 6);
+        }
+
+        const heading = document.createElement("div");
+
+        heading.className = "weekday";
+        heading.style.gridColumn = "1 / -1";
+
+        heading.textContent =
+            view === "day"
+                ? start.toLocaleDateString(
+                    "en-US",
+                    {
+                        weekday: "long",
+                        month: "long",
+                        day: "numeric"
+                    }
+                )
+                : "Select a day to view or add events";
+
+        calendar.appendChild(heading);
+
+        const list = document.createElement("div");
+
+        list.className = "week-list";
+        list.style.gridColumn = "1 / -1";
+
+        for (
+            let date = new Date(start);
+            date <= end;
+            date.setDate(date.getDate() + 1)
+        ) {
+            const key = dateString(date);
+            const dayEvents = eventsOn(key);
+            const row = document.createElement("div");
+
+            row.className = "week-day";
+
+            row.innerHTML =
+                `<strong>${
+                    date.toLocaleDateString(
+                        "en-US",
+                        {
+                            weekday: "short",
+                            month: "short",
+                            day: "numeric"
+                        }
+                    )
+                }</strong>` +
+                (
+                    dayEvents.length
+                        ? dayEvents.map(event =>
+                            `<p>${
+                                escapeHTML(
+                                    event.start
+                                        ? formatTime(event.start) + " · "
+                                        : ""
+                                )
+                            }${escapeHTML(event.title)}</p>`
+                        ).join("")
+                        : "<p>No events</p>"
+                );
+
+            row.addEventListener("click", () => {
+                selectedDate = key;
+                openEditor(key);
+            });
+
+            list.appendChild(row);
+        }
+
+        calendar.appendChild(list);
+    }
+
+    function renderEvents(list = null) {
+        const query = $("searchInput")
+            .value
+            .trim()
+            .toLowerCase();
+
+        let shown = (list || events.slice())
+            .filter(
+                event =>
+                    event.date >= dateString(
+                        new Date(2026, 0, 1)
+                    )
+            )
+            .filter(event => {
+                const text = [
+                    event.title,
+                    event.location,
+                    event.category,
+                    event.description
+                ].join(" ").toLowerCase();
+
+                return !query || text.includes(query);
+            })
+            .sort(
+                (a, b) =>
+                    a.date.localeCompare(b.date) ||
+                    (a.start || "").localeCompare(
+                        b.start || ""
+                    )
+            );
+
+        eventList.innerHTML = "";
+
+        if (!shown.length) {
+            eventList.innerHTML = `
+                <div class="empty-state">
+                    No events found.<br>
+                    Use “Add Event” to create one.
+                </div>
+            `;
+
+            return;
+        }
+
+        shown.forEach(event => {
+            const date = parseDate(event.date);
+            const card = document.createElement("article");
+
+            card.className = "event-card";
+            card.style.cssText = eventStyle(event);
+
+            card.innerHTML = `
+                <div class="date-box">
+                    <strong>
+                        ${String(date.getDate()).padStart(2, "0")}
+                    </strong>
+
+                    <span>
+                        ${date.toLocaleDateString(
+                            "en-US",
+                            { month: "short" }
+                        )}
+                    </span>
+                </div>
+
+                <div class="event-info">
+                    <h4>${escapeHTML(event.title)}</h4>
+
+                    <p>
+                        ◷ ${escapeHTML(timeRange(event))}
+                    </p>
+
+                    <p>
+                        ⌖ ${escapeHTML(
+                            event.location ||
+                            "Location not specified"
+                        )}
+                    </p>
+
+                    <span class="tag">
+                        ${escapeHTML(
+                            event.category || "Other"
+                        )}
+                    </span>
+                </div>
+
+                <div class="event-actions">
+                    <button
+                        type="button"
+                        aria-label="Edit ${escapeHTML(event.title)}"
+                        title="Edit event"
+                    >
+                        ✎
+                    </button>
+
+                    <button
+                        type="button"
+                        aria-label="Delete ${escapeHTML(event.title)}"
+                        title="Delete event"
+                    >
+                        ×
+                    </button>
+                </div>
+            `;
+
+            const buttons = card.querySelectorAll("button");
+
+            buttons[0].addEventListener(
+                "click",
+                () => openEditor(event.date, event.id)
+            );
+
+            buttons[1].addEventListener(
+                "click",
+                () => deleteEvent(event.id)
+            );
+
+            eventList.appendChild(card);
+        });
+    }
+
+    function renderAll() {
+        renderCalendar();
+        renderEvents();
+    }
+
+    function openEditor(date = selectedDate, id = null) {
+        editingId = id;
+
+        const event = id
+            ? events.find(item => item.id === id)
+            : null;
+
+        form.reset();
+
+        $("formMessage").textContent = "";
+        $("dialogTitle").textContent =
+            event ? "Edit Event" : "Add Event";
+
+        $("deleteEventBtn").hidden = !event;
+
+        $("eventTitle").value = event?.title || "";
+
+        $("eventDate").value =
+            event?.date ||
+            date ||
+            dateString(currentMonth);
+
+        $("eventCategory").value =
+            event?.category || "Workshop";
+
+        $("eventStart").value = event?.start || "";
+        $("eventEnd").value = event?.end || "";
+        $("eventLocation").value = event?.location || "";
+        $("eventDescription").value =
+            event?.description || "";
+
+        if (!dialog.open) {
+            dialog.showModal();
+        }
+    }
+
+    function closeEditor() {
+        dialog.close();
+        editingId = null;
+    }
+
+    function deleteEvent(id) {
+        const event = events.find(item => item.id === id);
+
+        if (!event) return;
+
+        if (!confirm(`Delete "${event.title}"?`)) {
+            return;
+        }
+
+        events = events.filter(
+            item => item.id !== id
+        );
+
+        saveEvents();
+        renderAll();
+    }
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+
+        const title = $("eventTitle").value.trim();
+        const date = $("eventDate").value;
+        const start = $("eventStart").value;
+        const end = $("eventEnd").value;
+
+        if (!title || !date) {
+            $("formMessage").textContent =
+                "Please enter an event title and date.";
+
+            return;
+        }
+
+        if (start && end && end < start) {
+            $("formMessage").textContent =
+                "End time must be after start time.";
+
+            return;
+        }
+
+        const record = {
+            id: editingId || `event-${Date.now()}`,
+            title,
+            date,
+            start,
+            end,
+            location: $("eventLocation").value.trim(),
+            category: $("eventCategory").value,
+            description:
+                $("eventDescription").value.trim()
+        };
+
+        if (editingId) {
+            events = events.map(item =>
+                item.id === editingId
+                    ? record
+                    : item
+            );
+        } else {
+            events.push(record);
+        }
+
+        currentMonth = new Date(
+            Number(date.slice(0, 4)),
+            Number(date.slice(5, 7)) - 1,
+            1
+        );
+
+        selectedDate = date;
+
+        saveEvents();
+        closeEditor();
+        renderAll();
+    });
+
+    $("addEventBtn").addEventListener(
+        "click",
+        () => openEditor(
+            selectedDate || dateString(currentMonth)
+        )
+    );
+
+    $("closeDialog").addEventListener(
+        "click",
+        closeEditor
+    );
+
+    $("cancelDialog").addEventListener(
+        "click",
+        closeEditor
+    );
+
+    $("deleteEventBtn").addEventListener(
+        "click",
+        () => {
+            if (!editingId) return;
+
+            const id = editingId;
+
+            closeEditor();
+            deleteEvent(id);
+        }
+    );
+
+    $("prevMonth").addEventListener("click", () => {
+        currentMonth = new Date(
+            currentMonth.getFullYear(),
+            currentMonth.getMonth() - 1,
+            1
+        );
+
+        selectedDate = "";
+        renderCalendar();
+    });
+
+    $("nextMonth").addEventListener("click", () => {
+        currentMonth = new Date(
+            currentMonth.getFullYear(),
+            currentMonth.getMonth() + 1,
+            1
+        );
+
+        selectedDate = "";
+        renderCalendar();
+    });
+
+    document
+        .querySelectorAll("[data-view]")
+        .forEach(button => {
+            button.addEventListener("click", () => {
+                view = button.dataset.view;
+
+                document
+                    .querySelectorAll("[data-view]")
+                    .forEach(item => {
+                        item.classList.toggle(
+                            "active",
+                            item === button
+                        );
+                    });
+
+                renderCalendar();
+            });
+        });
+
+    $("searchInput").addEventListener(
+        "input",
+        () => renderEvents()
+    );
+
+    $("viewAllBtn").addEventListener("click", () => {
+        $("searchInput").value = "";
+        selectedDate = "";
+        renderEvents();
+        renderCalendar();
+    });
+
+    $("exploreBtn").addEventListener("click", () => {
+        alert(
+            "Connect this button to your Explore Organizations page."
+        );
+    });
+
+    renderAll();
+})();
+</script>
+
+</body>
+</html>
