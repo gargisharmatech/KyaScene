@@ -1128,7 +1128,11 @@ function App() {
                 Share events, opportunities and announcements.
               </p>
 
-              <button>
+              <button
+                onClick={() => {
+                  window.location.href = "/login.html";
+                }}
+              >
                 Continue →
               </button>
 
