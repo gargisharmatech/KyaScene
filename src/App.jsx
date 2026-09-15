@@ -1130,7 +1130,7 @@ function App() {
 
               <button
                 onClick={() => {
-                  window.location.href = "/login.html";
+                  window.location.href = "/organization-setup.html";
                 }}
               >
                 Continue →
@@ -1147,7 +1147,10 @@ function App() {
         </div>
       )}
 
-      {/* ================= STUDENT LOGIN ================= */}
+      {/* ================= STUDENT DEMO ONBOARDING (STEP 1) =================
+          Deliberately NOT a credential login: there is no password field and
+          nothing here is validated, stored or transmitted. The College ID box
+          is uncontrolled demo copy only — Continue just advances local state. */}
 
       {!showIntro && page === "student-login" && (
         <div className="onboarding-page">
@@ -1174,28 +1177,16 @@ function App() {
 
               <label>
                 College ID
+                <span> (demo only)</span>
               </label>
 
               <input
                 type="text"
-                placeholder="Enter your college ID"
-              />
-
-            </div>
-
-            <div className="input-group">
-
-              <label>
-                Password
-              </label>
-
-              <input
-                type="password"
-                placeholder="Enter your password"
+                placeholder="Anything works — this is a demo"
               />
 
               <small>
-                Demo login for now ✨
+                Demo onboarding only ✨ Nothing is checked, saved or sent anywhere.
               </small>
 
             </div>
@@ -3293,7 +3284,7 @@ function App() {
         </p>
 
         <span className="verified-tag">
-          ✓ College ID verified
+          Demo profile
         </span>
 
       </div>
@@ -3468,7 +3459,7 @@ function App() {
 
             <strong>College account</strong>
 
-            <p>IGDTUW · student@igdtuw.ac.in</p>
+            <p>Demo account · student@example.com</p>
 
           </div>
 
@@ -3494,9 +3485,9 @@ function App() {
 
           <div>
 
-            <strong>Change password</strong>
+            <strong>Account security</strong>
 
-            <p>Last updated 2 months ago</p>
+            <p>Last reviewed 2 months ago</p>
 
           </div>
 
