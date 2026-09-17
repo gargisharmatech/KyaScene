@@ -33,6 +33,8 @@ const KYA_AI_ANSWERS = {
 const KYA_AI_FALLBACK =
   "Good question! In the full version, kyaScenehai! AI answers from live campus data — events, deadlines, forms and club notices. For this demo, tap one of the suggested questions above. ✨";
 
+const URGENT_ITEM_COUNT = 2;
+
 /* ---- Profile: notification preferences shown on the profile screen ---- */
 
 const PREF_ROWS = [
@@ -899,6 +901,93 @@ function StudentExperienceChrome({ page, setPage }) {
   );
 }
 
+function CareerArrival({ onSkip, onChoose }) {
+  const bags = [
+    ["🎒", "Internship Drives", "Find your next build-and-learn opportunity.", "internships"],
+    ["💼", "Placement Drives", "Track the companies coming to campus.", "placements"],
+    ["✨", "Sessions You Could Benefit From", "Talks, panels and career-ready guidance.", "sessions"],
+  ];
+
+  return (
+    <section className="career-arrival" aria-label="Career opportunities arriving">
+      <div className="career-arrival-sky" aria-hidden="true">
+        <span className="career-star career-star-one">✦</span>
+        <span className="career-star career-star-two">·</span>
+        <span className="career-star career-star-three">✧</span>
+      </div>
+      <div className="career-arrival-copy">
+        <span className="career-arrival-eyebrow">CAREER RADAR · LIVE DROP</span>
+        <h2>Career opportunities have arrived. 🚚</h2>
+        <p>Chal, career ka scene dekhte hain. 🚀</p>
+      </div>
+      <div className="career-delivery-road" aria-hidden="true">
+        <div className="career-truck"><span>🚚</span><b>CAREER</b></div>
+        <i className="career-road-line career-road-line-one" />
+        <i className="career-road-line career-road-line-two" />
+      </div>
+      <div className="career-bag-staging">
+        {bags.map(([icon, label, description, key], index) => (
+          <button
+            key={key}
+            type="button"
+            className={`career-bag career-bag-${index + 1}`}
+            onClick={() => onChoose(key)}
+          >
+            <span className="career-bag-icon" aria-hidden="true">{icon}</span>
+            <span className="career-bag-copy"><strong>{label}</strong><small>{description}</small></span>
+            <span className="career-bag-arrow" aria-hidden="true">→</span>
+          </button>
+        ))}
+      </div>
+      <button type="button" className="career-arrival-skip" onClick={onSkip}>Skip arrival →</button>
+    </section>
+  );
+}
+
+function PlacementJourney({ journeyType = "placements", opportunities, studentYear, appliedOpportunities, onToggle }) {
+  const journeyCopy = {
+    placements: ["MILESTONE CAREER MAP", "Career ka scene sorted. 😎", "Follow the route from campus prep to the companies on your horizon.", "🚀", "Your career route"],
+    internships: ["INTERNSHIP JOURNEY", "Internship ka scene dekhte hain 🚀", "Explore opportunities that can turn your next idea into experience.", "🧭", "Your opportunity route"],
+    sessions: ["LEARNING & SESSION JOURNEY", "Kuch naya seekhne ka scene? ✨", "Follow the talks, workshops and career sessions that can move you forward.", "💡", "Your learning route"],
+  }[journeyType];
+
+  return (
+    <section className={`career-journey career-journey-${journeyType}`} aria-label={`${journeyType} career journey`}>
+      <div className="career-journey-intro">
+        <span className="career-arrival-eyebrow">{journeyCopy[0]}</span>
+        <h2>{journeyCopy[1]}</h2>
+        <p>{journeyCopy[2]}</p>
+        <span className="career-year-chip">Matched to {yearLabelOf(studentYear)}</span>
+      </div>
+      <div className="career-route">
+        <div className="career-route-start"><span>{journeyCopy[3]}</span><strong>START</strong><small>{journeyCopy[4]}</small></div>
+        {opportunities.map((opportunity, index) => {
+          const eligible = careerEligibleFor(opportunity, studentYear);
+          const applied = appliedOpportunities.includes(opportunity.id);
+          return (
+            <article key={opportunity.id} className={`career-milestone ${index === 0 ? "is-next" : ""} ${eligible ? "" : "is-out"}`}>
+              <div className="career-milestone-node"><span>{journeyType === "sessions" ? "✦" : opportunity.dueDay ? "📍" : "✦"}</span></div>
+              <div className="career-milestone-card">
+                <div className="career-milestone-date">{careerDateLabel(opportunity).replace("⏳ ", "📅 ")}</div>
+                <h3>{opportunity.org}</h3>
+                <p className="career-milestone-role">{opportunity.title}</p>
+                <p className="career-milestone-desc">{opportunity.description}</p>
+                <div className="career-meta"><span>📍 {opportunity.location}</span><span>🎓 {yearRangeLabel(opportunity)}</span></div>
+                <div className="career-card-foot">
+                  <span className={`career-eligibility ${eligible ? "is-eligible" : "is-ineligible"}`}>{eligible ? "✓ You're eligible" : `For ${yearRangeLabel(opportunity)} only`}</span>
+                  {eligible ? (
+                    <button type="button" className={`career-action ${applied ? "applied" : ""}`} onClick={() => onToggle(opportunity.id)}>{applied ? "Marked applied ✓" : `${opportunity.action} →`}</button>
+                  ) : <span className="career-action-locked">Opens in 3rd Year</span>}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 function App() {
   const [showIntro, setShowIntro] = useState(true);
   const [page, setPage] = useState("landing");
@@ -913,6 +1002,7 @@ function App() {
   const [collegeId, setCollegeId] = useState("");
   const [studentStep, setStudentStep] = useState(1);
   const [careerFilter, setCareerFilter] = useState("all");
+  const [careerView, setCareerView] = useState("arrival");
   const [appliedOpportunities, setAppliedOpportunities] = useState([]);
   const [tasks, setTasks] = useState(DEMO_TASKS);
 
@@ -980,6 +1070,19 @@ function App() {
   useEffect(() => {
     aiEndRef.current?.scrollIntoView?.({ block: "end" });
   }, [aiMessages, aiTyping]);
+
+  useEffect(() => {
+    if (page !== "career-radar") {
+      return undefined;
+    }
+
+    const resetTimer = window.setTimeout(() => setCareerView("arrival"), 0);
+    const arrivalTimer = window.setTimeout(() => setCareerView("bags"), 3400);
+    return () => {
+      window.clearTimeout(resetTimer);
+      window.clearTimeout(arrivalTimer);
+    };
+  }, [page]);
 
   // Calendar — active range + visible list (prototype demo data only)
   const activeCalendarRange =
@@ -1368,12 +1471,13 @@ function App() {
 
               <div className="section-title">
                 <span className="section-dot"></span>
-                <h2>Needs Your Attention</h2>
+                <div className="urgent-heading-copy">
+                  <h2>Arre bhai, late ho jayega! 😭</h2>
+                  <p>Ye kaam pending hai — kar lo jaldi. 👀</p>
+                </div>
               </div>
 
-              <span className="section-count">
-                2
-              </span>
+              <span className="section-count"><span className="urgency-pulse" aria-hidden="true" />{URGENT_ITEM_COUNT} things need you</span>
 
             </div>
 
@@ -1629,9 +1733,51 @@ function App() {
               </button>
             </div>
 
+          ) : careerView === "arrival" ? (
+            <CareerArrival
+              onSkip={() => setCareerView("bags")}
+              onChoose={(key) => {
+                setCareerFilter(key);
+                setCareerView(key === "placements" ? "placement" : key);
+              }}
+            />
           ) : (
-
             <>
+              {careerView === "bags" && (
+                <section className="career-bag-choice-screen" aria-label="Choose a Career Radar collection">
+                  <div className="career-bag-choice-heading">
+                    <span className="career-arrival-eyebrow">YOUR CAREER DROP IS READY</span>
+                    <h2>Career ka scene sorted. 😎</h2>
+                    <p>Pick a route and start exploring what is waiting for you.</p>
+                  </div>
+                  <div className="career-bag-choice-grid">
+                    {[
+                        ["🎒", "Internship Drives", "Opportunities worth checking out", "internships"],
+                      ["💼", "Placement Drives", "A milestone map of campus hiring", "placements"],
+                      ["✨", "Sessions You Could Benefit From", "Talks and guidance matched to you", "sessions"],
+                    ].map(([icon, label, note, key]) => (
+                      <button key={key} type="button" className="career-bag-choice" onClick={() => { setCareerFilter(key); setCareerView(key === "placements" ? "placement" : key); }}>
+                        <span className="career-bag-choice-icon">{icon}</span><strong>{label}</strong><small>{note}</small><span>Explore →</span>
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {["placement", "internships", "sessions"].includes(careerView) ? (
+                <>
+                  <button type="button" className="career-journey-back" onClick={() => setCareerView("bags")}>← Career collections</button>
+                  <PlacementJourney
+                    journeyType={careerView === "placement" ? "placements" : careerView}
+                    opportunities={CAREER_OPPORTUNITIES.filter((opportunity) => opportunity.category === (careerView === "placement" ? "placements" : careerView)).sort((a, b) => (a.dueDay ?? Infinity) - (b.dueDay ?? Infinity))}
+                    studentYear={studentYear}
+                    appliedOpportunities={appliedOpportunities}
+                    onToggle={toggleOpportunityApplied}
+                  />
+                </>
+              ) : careerView !== "bags" ? (
+                <>
+                  <div className="career-collection-banner"><span>{careerFilter === "internships" ? "🎒" : "✨"}</span><div><strong>{careerFilter === "internships" ? "Internship Drives" : "Sessions You Could Benefit From"}</strong><small>{careerFilter === "internships" ? "Opportunities worth checking out" : "Career guidance that matches your next move"}</small></div><button type="button" onClick={() => setCareerView("bags")}>All collections →</button></div>
               <div
                 className="career-filters"
                 role="group"
@@ -1753,6 +1899,8 @@ function App() {
                 Prototype demo content — these are placeholder listings for
                 the kyaScenehai! UI, not real live openings.
               </p>
+                </>
+              ) : null}
             </>
 
           )}
