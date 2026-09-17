@@ -368,12 +368,6 @@ const TASK_STATUS_LABELS = {
   completed: "Completed",
 };
 
-const TASK_TIMELINE_GROUPS = [
-  { key: "today", emoji: "🔴", label: "Due Today" },
-  { key: "week", emoji: "🟠", label: "Due This Week" },
-  { key: "later", emoji: "🟣", label: "Later" },
-];
-
 const taskDaysOut = (task) => task.dueDay - CALENDAR_TODAY;
 
 const taskDeadlineLabel = (task) => {
@@ -389,20 +383,6 @@ const taskDeadlineLabel = (task) => {
   }
 
   return `Due in ${daysOut} days${at}`;
-};
-
-const taskTimelineBucketOf = (task) => {
-  const daysOut = taskDaysOut(task);
-
-  if (daysOut <= 0) {
-    return 0;
-  }
-
-  if (daysOut <= 7) {
-    return 1;
-  }
-
-  return 2;
 };
 
 /* ---- Ambient "information flow" background: decorative canvas layer.
@@ -862,7 +842,7 @@ const STUDENT_EXPERIENCE_PAGES = [
   "profile",
 ];
 
-function StudentExperienceChrome({ page, setPage }) {
+function StudentExperienceChrome({ page, setPage, setCalendarIntro }) {
   const items = [
     ["student-home", "🏠", "Home"],
     ["explore", "🔎", "Explore"],
@@ -879,7 +859,10 @@ function StudentExperienceChrome({ page, setPage }) {
             key={target}
             type="button"
             className={`student-side-nav-item ${page === target ? "active" : ""}`}
-            onClick={() => setPage(target)}
+            onClick={() => {
+              if (target === "calendar") setCalendarIntro(true);
+              setPage(target);
+            }}
             aria-current={page === target ? "page" : undefined}
           >
             <span aria-hidden="true">{icon}</span>
@@ -995,6 +978,22 @@ function App() {
   const [exploreCategory, setExploreCategory] = useState(null);
   const [selectedDate, setSelectedDate] = useState(15);
   const [calendarRange, setCalendarRange] = useState("month");
+  const [calendarIntro, setCalendarIntro] = useState(true);
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteText, setNoteText] = useState(() => {
+    try {
+      return window.sessionStorage.getItem("kyascene-calendar-note") || "";
+    } catch {
+      return "";
+    }
+  });
+  const [savedNote, setSavedNote] = useState(() => {
+    try {
+      return window.sessionStorage.getItem("kyascene-calendar-note") || "";
+    } catch {
+      return "";
+    }
+  });
 
   // "Your Year" from onboarding — Career Radar gates on this single source.
   const [studentYear, setStudentYear] = useState(null);
@@ -1005,6 +1004,8 @@ function App() {
   const [careerView, setCareerView] = useState("arrival");
   const [appliedOpportunities, setAppliedOpportunities] = useState([]);
   const [tasks, setTasks] = useState(DEMO_TASKS);
+  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  const [taskToast, setTaskToast] = useState("");
 
   // Intro safety-net: if animationend is ever suppressed, still exit.
   useEffect(() => {
@@ -1018,6 +1019,19 @@ function App() {
 
     return () => window.clearTimeout(introTimer);
   }, [showIntro]);
+
+  const saveCalendarNote = () => {
+    const trimmedNote = noteText.trim();
+    if (!trimmedNote) return;
+    setSavedNote(trimmedNote);
+    setNoteText(trimmedNote);
+    setNoteOpen(false);
+    try {
+      window.sessionStorage.setItem("kyascene-calendar-note", trimmedNote);
+    } catch {
+      // Session storage is best-effort in this static prototype.
+    }
+  };
 
   // AI assistant (prototype only — preset answers, no backend)
   const [aiMessages, setAiMessages] = useState([
@@ -1084,6 +1098,19 @@ function App() {
     };
   }, [page]);
 
+  useEffect(() => {
+    if (page !== "calendar") {
+      return undefined;
+    }
+
+    const resetTimer = window.setTimeout(() => setCalendarIntro(true), 0);
+    const revealTimer = window.setTimeout(() => setCalendarIntro(false), 2700);
+    return () => {
+      window.clearTimeout(resetTimer);
+      window.clearTimeout(revealTimer);
+    };
+  }, [page]);
+
   // Calendar — active range + visible list (prototype demo data only)
   const activeCalendarRange =
     CALENDAR_RANGES.find((range) => range.key === calendarRange) ||
@@ -1121,15 +1148,13 @@ function App() {
     .sort((a, b) => a.dueDay - b.dueDay);
 
   const completedTasks = tasks.filter((task) => task.done);
+  const selectedTask = tasks.find((task) => task.id === selectedTaskId) ?? null;
 
   const openTaskCount = activeTasks.length;
 
-  const taskTimelineGroups = TASK_TIMELINE_GROUPS.map((group, index) => ({
-    ...group,
-    tasks: activeTasks.filter((task) => taskTimelineBucketOf(task) === index),
-  })).filter((group) => group.tasks.length > 0);
-
   const toggleTaskDone = (taskId) => {
+    const currentTask = tasks.find((task) => task.id === taskId);
+    const willComplete = currentTask && !currentTask.done;
     setTasks((currentTasks) =>
       currentTasks.map((task) => {
         if (task.id !== taskId) {
@@ -1146,6 +1171,8 @@ function App() {
           : { ...task, done: true, status: "completed", progress: 100 };
       })
     );
+    setTaskToast(willComplete ? "Done! 🎉 Your task is marked complete." : "Task reopened — you can pick it up again.");
+    window.setTimeout(() => setTaskToast(""), 2600);
   };
 
   const toggleOpportunityApplied = (opportunityId) => {
@@ -1178,7 +1205,7 @@ function App() {
 
       {AMBIENT_PAGES.includes(page) ? <AmbientFlow /> : null}
       {!showIntro && STUDENT_EXPERIENCE_PAGES.includes(page) ? (
-        <StudentExperienceChrome page={page} setPage={setPage} />
+        <StudentExperienceChrome page={page} setPage={setPage} setCalendarIntro={setCalendarIntro} />
       ) : null}
 
       {/* ================= INTRO STORY ================= */}
@@ -1913,130 +1940,85 @@ function App() {
       {/* ================= MY TASKS ================= */}
 
       {!showIntro && page === "my-tasks" && (
-        <div className="tasks-page">
-
-          <div className="tasks-hero">
-
-            <button
-              type="button"
-              className="tasks-back"
-              onClick={() => setPage("student-home")}
-            >
-              ← Home
-            </button>
-
-            <div className="tasks-hero-copy">
-              <h2>✅ My Tasks</h2>
-              <p>Track what you need to do</p>
+        <div className="tasks-page tasks-live-page">
+          <div className="tasks-live-hero">
+            <button type="button" className="tasks-back" onClick={() => setPage("student-home")}>← Home</button>
+            <div className="tasks-live-hero-copy">
+              <span className="tasks-live-kicker">YOUR CAMPUS ACTIVITY CENTER</span>
+              <h2>☑️ My Tasks</h2>
+              <p>Keep track. Stay ahead. See what happens next. ✨</p>
             </div>
-
-            <span className="tasks-summary-chip">
-              {openTaskCount} open · {completedTasks.length} done
-            </span>
-
+            <div className="tasks-live-progress" aria-label={`${completedTasks.length} of ${tasks.length} tasks completed`}>
+              <span>{completedTasks.length}/{tasks.length}</span>
+              <div><i style={{ width: `${tasks.length ? (completedTasks.length / tasks.length) * 100 : 0}%` }} /></div>
+              <small>scene progress</small>
+            </div>
           </div>
 
-          <div className="tasks-timeline">
-            {taskTimelineGroups.map((group) => (
-              <section key={group.key} className="tasks-section">
-                <div className="tasks-section-heading">
-                  <h3>
-                    <span aria-hidden="true">{group.emoji}</span>{" "}
-                    {group.label}
-                  </h3>
-                  <span>{group.tasks.length}</span>
-                </div>
+          {taskToast && <div className="task-toast" role="status">{taskToast}</div>}
 
-                {group.tasks.map((task) => (
-                  <article
-                    key={task.id}
-                    className={`task-card ${
-                      group.key === "today"
-                        ? "task-card-soon"
-                        : group.key === "week"
-                          ? "task-card-week"
-                          : ""
-                    }`}
-                  >
-                    <div className="task-card-top">
-                      <span
-                        className={`task-status task-status-${task.status}`}
-                      >
-                        {TASK_STATUS_LABELS[task.status]}
-                      </span>
-                      <span className={`task-deadline when-${group.key}`}>
-                        {taskDeadlineLabel(task)}
-                      </span>
-                    </div>
-
-                    <h4 className="task-title">{task.title}</h4>
-                    <p className="task-related">↳ {task.related}</p>
-
-                    {task.progress > 0 && (
-                      <div className="task-progress-row">
-                        <div className="task-progress">
-                          <i style={{ width: `${task.progress}%` }} />
-                        </div>
-                        <span>{task.progress}%</span>
-                      </div>
-                    )}
-
-                    <button
-                      type="button"
-                      className="task-done-button"
-                      onClick={() => toggleTaskDone(task.id)}
-                    >
-                      Mark as done ✓
-                    </button>
-                  </article>
+          <div className="tasks-live-grid">
+            <section className="tasks-live-group tasks-needs-action">
+              <div className="tasks-live-group-heading"><div><span>🔥 NEEDS ACTION</span><h3>Bas ye kaam pending hain.</h3></div><b>{activeTasks.filter((task) => task.status === "to-do" || task.status === "deadline-soon").length}</b></div>
+              <div className="tasks-live-cards">
+                {activeTasks.filter((task) => task.status === "to-do" || task.status === "deadline-soon").map((task) => (
+                  <button type="button" key={task.id} className={`task-live-card ${task.status === "deadline-soon" ? "is-urgent" : ""}`} onClick={() => setSelectedTaskId(task.id)}>
+                    <span className="task-live-icon">{task.title.toLowerCase().includes("hackathon") ? "🎯" : task.title.toLowerCase().includes("session") ? "🎤" : "📝"}</span>
+                    <span className="task-live-card-main"><span className={`task-status task-status-${task.status}`}>{TASK_STATUS_LABELS[task.status]}</span><strong>{task.title}</strong><small>{task.related}</small><span className="task-live-meta">{taskDeadlineLabel(task)} · {task.progress}% ready</span><span className="task-live-bar"><i style={{ width: `${task.progress}%` }} /></span></span>
+                    <span className="task-live-arrow">→</span>
+                  </button>
                 ))}
-              </section>
-            ))}
-
-            {activeTasks.length === 0 && (
-              <div className="task-card task-card-empty">
-                All caught up 🎉 — nothing pending right now.
               </div>
-            )}
+            </section>
+
+            <section className="tasks-live-group tasks-in-progress">
+              <div className="tasks-live-group-heading"><div><span>⏳ IN PROGRESS</span><h3>Jo start kiya hai, woh yahan hai.</h3></div><b>{activeTasks.filter((task) => task.status === "in-progress").length}</b></div>
+              <div className="tasks-live-cards">
+                {activeTasks.filter((task) => task.status === "in-progress").map((task) => (
+                  <button type="button" key={task.id} className="task-live-card is-progress" onClick={() => setSelectedTaskId(task.id)}>
+                    <span className="task-live-icon">📚</span><span className="task-live-card-main"><span className="task-status task-status-in-progress">In Progress</span><strong>{task.title}</strong><small>{task.related}</small><span className="task-live-meta">{task.progress}% complete · {taskDeadlineLabel(task)}</span><span className="task-live-bar"><i style={{ width: `${task.progress}%` }} /></span></span><span className="task-live-arrow">→</span>
+                  </button>
+                ))}
+                {activeTasks.filter((task) => task.status === "in-progress").length === 0 && <div className="tasks-live-empty">Nothing in progress right now. Nice pace. 😎</div>}
+              </div>
+            </section>
+
+            <section className="tasks-live-group tasks-updates">
+              <div className="tasks-live-group-heading"><div><span>📢 UPDATES & RESULTS</span><h3>What changed lately.</h3></div><b>{completedTasks.length}</b></div>
+              <div className="tasks-live-cards">
+                {completedTasks.map((task) => (
+                  <button type="button" key={task.id} className="task-live-card is-complete" onClick={() => setSelectedTaskId(task.id)}>
+                    <span className="task-live-icon">✅</span><span className="task-live-card-main"><span className="task-status task-status-completed">Completed</span><strong>{task.title}</strong><small>{task.related}</small><span className="task-live-outcome">{task.doneText || "Completed"}</span><span className="task-live-next">Open activity →</span></span><span className="task-live-arrow">→</span>
+                  </button>
+                ))}
+                {completedTasks.length === 0 && <div className="tasks-live-empty">No updates yet. Your next milestone will show here.</div>}
+              </div>
+            </section>
           </div>
 
-          <section className="tasks-section tasks-completed-section">
-
-            <div className="tasks-section-heading">
-              <h3>Completed</h3>
-              <span>{completedTasks.length}</span>
-            </div>
-
-            {completedTasks.map((task) => (
-              <article key={task.id} className="task-card task-card-completed">
-                <div className="task-card-top">
-                  <span className="task-status task-status-completed">
-                    Completed
-                  </span>
-                  <span className="task-deadline">{task.doneText}</span>
-                </div>
-
-                <h4 className="task-title">{task.title}</h4>
-                <p className="task-related">↳ {task.related}</p>
-
-                <button
-                  type="button"
-                  className="task-reopen-button"
-                  onClick={() => toggleTaskDone(task.id)}
-                >
-                  Reopen (demo)
-                </button>
-              </article>
-            ))}
-
+          <section className="tasks-completed-strip">
+            <div><span>✅ COMPLETED</span><h3>Ye wala ho gaya. Nice. 😎</h3></div>
+            <div className="tasks-completed-pills">{completedTasks.map((task) => <button type="button" key={task.id} onClick={() => setSelectedTaskId(task.id)}>✓ {task.title}</button>)}</div>
           </section>
 
-          <p className="tasks-demo-note">
-            Demo board for the prototype — task states reset on reload.
-          </p>
+          <p className="tasks-demo-note">Demo board for the prototype — task states reset on reload.</p>
 
-          
-
+          {selectedTask && (
+            <div className="task-modal-backdrop" role="presentation" onClick={() => setSelectedTaskId(null)}>
+              <section className="task-modal" role="dialog" aria-modal="true" aria-labelledby="task-modal-title" onClick={(event) => event.stopPropagation()}>
+                <button type="button" className="task-modal-close" aria-label="Close task activity" onClick={() => setSelectedTaskId(null)}>×</button>
+                <span className="tasks-live-kicker">YOUR ACTIVITY TIMELINE</span>
+                <div className="task-modal-heading"><span className="task-modal-icon">{selectedTask.done ? "✅" : "🎯"}</span><div><span className={`task-status task-status-${selectedTask.status}`}>{TASK_STATUS_LABELS[selectedTask.status]}</span><h2 id="task-modal-title">{selectedTask.title}</h2><p>{selectedTask.related}</p></div></div>
+                <div className="task-modal-progress"><div><span>Progress</span><b>{selectedTask.progress}%</b></div><div className="task-live-bar"><i style={{ width: `${selectedTask.progress}%` }} /></div></div>
+                <div className="task-activity-timeline">
+                  <div className="task-activity-step done"><span>✓</span><div><strong>Task added to your campus scene</strong><small>{selectedTask.related}</small></div></div>
+                  <div className={`task-activity-step ${selectedTask.done ? "done" : "current"}`}><span>{selectedTask.done ? "✓" : "●"}</span><div><strong>{selectedTask.done ? "Task completed" : "Your next action"}</strong><small>{selectedTask.done ? (selectedTask.doneText || "Completed") : "This task is still waiting for your action."}</small></div></div>
+                  <div className="task-activity-step"><span>○</span><div><strong>Next update</strong><small>No result or outcome update is recorded for this task yet.</small></div></div>
+                </div>
+                <div className="task-modal-footer"><span>{selectedTask.done ? "You're officially done here." : taskDeadlineLabel(selectedTask)}</span><button type="button" className="task-modal-cta" onClick={() => toggleTaskDone(selectedTask.id)}>{selectedTask.done ? "Reopen task" : "Mark as done ✓"}</button></div>
+              </section>
+            </div>
+          )}
         </div>
       )}
 
@@ -2620,7 +2602,63 @@ function App() {
 {!showIntro && page === "calendar" && (
   <div className="app-page calendar-page">
 
-    <header className="calendar-header">
+ 	    {calendarIntro && (
+      <div className="calendar-diary-transition" aria-live="polite">
+        <div className="calendar-mascot-scene" aria-hidden="true">
+          <div className="calendar-mascot">
+            <span className="mascot-hair"></span>
+            <span className="mascot-eye mascot-eye-left"></span><span className="mascot-eye mascot-eye-right"></span>
+            <span className="mascot-smile"></span><span className="mascot-body"></span>
+            <span className="mascot-arm mascot-arm-left"></span><span className="mascot-arm mascot-arm-right"></span>
+            <span className="mascot-leg mascot-leg-left"></span><span className="mascot-leg mascot-leg-right"></span>
+            <span className="mascot-diary">✦</span>
+          </div>
+        </div>
+        <div className="calendar-diary-card">
+          <span className="calendar-diary-tab">A NOTE FOR YOUR CAMPUS SCENE</span>
+          <div className="calendar-diary-ring ring-one"></div><div className="calendar-diary-ring ring-two"></div>
+          <span className="calendar-diary-icon">▤</span>
+          <p>Got something important?<br /><strong>Write it down here so you don't miss it. ✨</strong></p>
+          <small>Calendar khol, scene sorted. 😎</small>
+        </div>
+        <button type="button" className="calendar-diary-skip" onClick={() => setCalendarIntro(false)}>Skip →</button>
+	      </div>
+	    )}
+
+    <button
+      type="button"
+      className="calendar-note-fab"
+      onClick={() => setNoteOpen(true)}
+      aria-label="Write a note"
+      title="Write a note ✍️"
+    >
+      <span aria-hidden="true">📖</span>
+      <i aria-hidden="true">✦</i>
+    </button>
+
+    {noteOpen && (
+      <div className="calendar-note-backdrop" role="presentation" onClick={() => setNoteOpen(false)}>
+        <section className="calendar-note-popup" role="dialog" aria-modal="true" aria-labelledby="calendar-note-title" onClick={(event) => event.stopPropagation()}>
+          <button type="button" className="calendar-note-close" onClick={() => setNoteOpen(false)} aria-label="Close note">×</button>
+          <span className="calendar-note-kicker">MY LITTLE CAMPUS DIARY</span>
+          <h2 id="calendar-note-title">Write it down ✍️</h2>
+          <p>Got something important? Save it here so you don't miss it.</p>
+          <textarea
+            value={noteText}
+            onChange={(event) => setNoteText(event.target.value)}
+            placeholder="Write your note..."
+            rows={5}
+            autoFocus
+          />
+          <div className="calendar-note-footer">
+            {savedNote && <small>Saved for this session ✓</small>}
+            <button type="button" className="calendar-note-save" onClick={saveCalendarNote} disabled={!noteText.trim()}>Save Note</button>
+          </div>
+        </section>
+      </div>
+    )}
+
+	    <header className="calendar-header">
 
       <div>
         <p className="eyebrow">
@@ -2722,6 +2760,7 @@ function App() {
           ).map((day) => {
 
             const hasEvent = calendarEventsOn(day).length > 0;
+            const dayEvents = calendarEventsOn(day);
 
             return hasEvent ? (
 
@@ -2734,7 +2773,10 @@ function App() {
                   setSelectedDate(selectedDate === day ? null : day)
                 }
               >
-                {day}
+                <strong>{day}</strong>
+                <span className="calendar-date-markers" aria-hidden="true">
+                  {dayEvents.map((event) => <i key={event.title} className={`calendar-date-marker marker-${event.kind}`}></i>)}
+                </span>
               </button>
 
             ) : (
