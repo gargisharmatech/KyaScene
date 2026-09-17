@@ -10,7 +10,7 @@ import studentChaos from "./assets/student-chaos.png";
 
 const INTRO_FALLBACK_MS = 7500;
 
-/* ---- kyaScene AI: prototype demo data (no backend — preset answers) ---- */
+/* ---- kyaScenehai! AI: prototype demo data (no backend — preset answers) ---- */
 
 const AI_SUGGESTIONS = [
   "When is the hackathon registration due?",
@@ -31,7 +31,7 @@ const KYA_AI_ANSWERS = {
 };
 
 const KYA_AI_FALLBACK =
-  "Good question! In the full version, kyaScene AI answers from live campus data — events, deadlines, forms and club notices. For this demo, tap one of the suggested questions above. ✨";
+  "Good question! In the full version, kyaScenehai! AI answers from live campus data — events, deadlines, forms and club notices. For this demo, tap one of the suggested questions above. ✨";
 
 /* ---- Profile: notification preferences shown on the profile screen ---- */
 
@@ -145,7 +145,7 @@ const CAREER_OPPORTUNITIES = [
     dueDay: 19,
     location: "Online application · Pune (hybrid, paid)",
     description:
-      "8-week paid summer internship across the platform teams. One application per student; shortlisting happens from your kyaScene profile.",
+      "8-week paid summer internship across the platform teams. One application per student; shortlisting happens from your kyaScenehai! profile.",
     action: "Apply",
   },
   {
@@ -192,7 +192,7 @@ const CAREER_OPPORTUNITIES = [
   },
   {
     id: "interview-panel",
-    org: "kyaScene Career Lab",
+    org: "kyaScenehai! Career Lab",
     title: "Cracking Product Interviews · Alumni Panel",
     type: "Career Session",
     category: "sessions",
@@ -843,6 +843,62 @@ function AmbientFlow() {
   );
 }
 
+function ProductBrand({ className = "" }) {
+  return (
+    <span className={`product-brand ${className}`} aria-label="kyaScenehai!">
+      <span className="brand-kya">kya</span><span className="brand-scene">Scene</span><span className="brand-hai">hai</span><span className="brand-exclaim">!</span>
+    </span>
+  );
+}
+const STUDENT_EXPERIENCE_PAGES = [
+  "student-home",
+  "career-radar",
+  "my-tasks",
+  "explore",
+  "calendar",
+  "ai",
+  "profile",
+];
+
+function StudentExperienceChrome({ page, setPage }) {
+  const items = [
+    ["student-home", "🏠", "Home"],
+    ["explore", "🔎", "Explore"],
+    ["calendar", "📅", "Calendar"],
+    ["profile", "👤", "Profile"],
+  ];
+
+  return (
+    <>
+      <aside className="student-side-nav" aria-label="Student navigation">
+        <div className="student-side-nav-label">Navigate</div>
+        {items.map(([target, icon, label]) => (
+          <button
+            key={target}
+            type="button"
+            className={`student-side-nav-item ${page === target ? "active" : ""}`}
+            onClick={() => setPage(target)}
+            aria-current={page === target ? "page" : undefined}
+          >
+            <span aria-hidden="true">{icon}</span>
+            <strong>{label}</strong>
+          </button>
+        ))}
+      </aside>
+      <button
+        type="button"
+        className="puchho-button"
+        onClick={() => setPage("ai")}
+        aria-label="Open Puchho AI assistant"
+      >
+        <span className="puchho-face" aria-hidden="true">✦</span>
+        <strong>Puchho?</strong>
+        <span className="puchho-message">Jo bhi samajh aa raha hai, bas puchho. 😌</span>
+      </button>
+    </>
+  );
+}
+
 function App() {
   const [showIntro, setShowIntro] = useState(true);
   const [page, setPage] = useState("landing");
@@ -852,7 +908,10 @@ function App() {
   const [calendarRange, setCalendarRange] = useState("month");
 
   // "Your Year" from onboarding — Career Radar gates on this single source.
-  const [studentYear, setStudentYear] = useState(3);
+  const [studentYear, setStudentYear] = useState(null);
+  const [studentName, setStudentName] = useState("");
+  const [collegeId, setCollegeId] = useState("");
+  const [studentStep, setStudentStep] = useState(1);
   const [careerFilter, setCareerFilter] = useState("all");
   const [appliedOpportunities, setAppliedOpportunities] = useState([]);
   const [tasks, setTasks] = useState(DEMO_TASKS);
@@ -875,7 +934,7 @@ function App() {
     {
       from: "ai",
       text:
-        "Hi! I'm your kyaScene assistant ✦ Ask me about deadlines, events, forms, clubs or what's trending on campus.",
+        "Hi! I'm your kyaScenehai! assistant ✦ Ask me about deadlines, events, forms, clubs or what's trending on campus.",
     },
   ]);
   const [aiInput, setAiInput] = useState("");
@@ -1015,6 +1074,9 @@ function App() {
     <div className="app">
 
       {AMBIENT_PAGES.includes(page) ? <AmbientFlow /> : null}
+      {!showIntro && STUDENT_EXPERIENCE_PAGES.includes(page) ? (
+        <StudentExperienceChrome page={page} setPage={setPage} />
+      ) : null}
 
       {/* ================= INTRO STORY ================= */}
 
@@ -1055,7 +1117,7 @@ function App() {
           </div>
 
           <div className="brand-reveal">
-            <span>kya</span>Scene
+            <ProductBrand />
           </div>
 
           <button
@@ -1073,324 +1135,205 @@ function App() {
 
       {!showIntro && page === "landing" && (
         <div className="landing-page">
-
-          <p className="welcome-text">
-            WELCOME TO
-          </p>
-
-          <h1 className="logo">
-            kya<span>Scene</span>
-          </h1>
-
-          <p className="tagline">
-            Know the scene. Don't miss the moment.
-          </p>
-
-          <div className="role-container">
-
-            {/* STUDENT */}
-
-            <div className="role-card">
-
-              <div className="role-icon">
-                🎓
-              </div>
-
-              <h2>
-                I'm a Student
-              </h2>
-
-              <p>
-                Stay updated with what matters on campus.
-              </p>
-
-              <button
-                onClick={() => setPage("student-login")}
-              >
-                Continue →
-              </button>
-
+          <div className="campus-network" aria-hidden="true">
+            <svg className="campus-network-lines" viewBox="0 0 1200 900" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="network-lavender" x1="0" x2="1">
+                  <stop offset="0" stopColor="#927cf2" stopOpacity="0" />
+                  <stop offset=".5" stopColor="#927cf2" stopOpacity=".48" />
+                  <stop offset="1" stopColor="#53cfc0" stopOpacity="0" />
+                </linearGradient>
+                <linearGradient id="network-teal" x1="0" x2="1">
+                  <stop offset="0" stopColor="#53cfc0" stopOpacity="0" />
+                  <stop offset=".5" stopColor="#53cfc0" stopOpacity=".38" />
+                  <stop offset="1" stopColor="#d873d7" stopOpacity="0" />
+                </linearGradient>
+              </defs>
+              <g className="network-lines">
+                <path d="M-50 210 C150 110 210 315 390 220 S630 95 810 185 1020 130 1250 245" />
+                <path d="M-30 640 C150 520 265 690 420 575 S700 515 835 630 1040 560 1230 470" />
+                <path d="M110 40 C180 225 330 250 470 395 S800 405 930 250 1080 190 1160 60" />
+                <path d="M50 830 C170 740 245 760 350 690 S590 665 710 760 960 820 1160 690" />
+                <path d="M170 340 C300 380 335 460 460 485 S700 470 850 390 1030 350 1180 410" />
+              </g>
+              <g className="network-nodes">
+                <circle cx="120" cy="170" r="5" /><circle cx="245" cy="286" r="4" />
+                <circle cx="390" cy="220" r="6" /><circle cx="560" cy="138" r="4" />
+                <circle cx="810" cy="185" r="5" /><circle cx="1015" cy="160" r="4" />
+                <circle cx="135" cy="610" r="5" /><circle cx="420" cy="575" r="6" />
+                <circle cx="660" cy="545" r="4" /><circle cx="835" cy="630" r="5" />
+                <circle cx="1060" cy="540" r="6" /><circle cx="350" cy="690" r="4" />
+                <circle cx="710" cy="760" r="5" /><circle cx="1000" cy="790" r="4" />
+              </g>
+            </svg>
+            <span className="network-icon network-icon-calendar">▦</span>
+            <span className="network-icon network-icon-bell">♢</span>
+            <span className="network-icon network-icon-trophy">♛</span>
+            <span className="network-icon network-icon-laptop">⌘</span>
+            <span className="network-icon network-icon-people">•••</span>
+            <span className="network-icon network-icon-ticket">◇</span>
+            <span className="network-icon network-icon-clock">◷</span>
+            <span className="network-icon network-icon-code">&lt;/&gt;</span>
+            <span className="network-icon network-icon-star">✦</span>
+            <span className="network-icon network-icon-pin">⌖</span>
+            <span className="network-traveler traveler-one" />
+            <span className="network-traveler traveler-two" />
+            <span className="network-traveler traveler-three" />
+            <div className="network-data-labels">
+              <span className="data-label data-event">EVENT</span>
+              <span className="data-label data-deadline">DEADLINE</span>
+              <span className="data-label data-club">CLUB</span>
+              <span className="data-label data-hackathon">HACKATHON</span>
+              <span className="data-label data-workshop">WORKSHOP</span>
+              <span className="data-label data-notice">NOTICE</span>
+              <span className="data-label data-opportunity">OPPORTUNITY</span>
+              <span className="data-label data-meetup">MEETUP</span>
+              <span className="data-label data-registration">REGISTRATION</span>
+              <span className="data-label data-news">CAMPUS NEWS</span>
             </div>
-
-            {/* ORGANIZATION */}
-
-            <div className="role-card">
-
-              <div className="role-icon">
-                📢
-              </div>
-
-              <h2>
-                I'm an Organization
-              </h2>
-
-              <p>
-                Share events, opportunities and announcements.
-              </p>
-
-              <button
-                onClick={() => {
-                  window.location.href = "/organization-setup.html";
-                }}
-              >
-                Continue →
-              </button>
-
+            <div className="network-particles">
+              <i /><i /><i /><i /><i /><i /><i /><i /><i /><i />
             </div>
+          </div>
+          <div className="landing-orbit landing-orbit-one" aria-hidden="true" />
+          <div className="landing-orbit landing-orbit-two" aria-hidden="true" />
+          <div className="campus-float float-calendar" aria-hidden="true">▦</div>
+          <div className="campus-float float-bell" aria-hidden="true">♢</div>
+          <div className="campus-float float-ticket" aria-hidden="true">✦</div>
+          <div className="campus-float float-people" aria-hidden="true">•••</div>
 
+          <div className="landing-intro">
+            <div className="landing-brand-pill"><ProductBrand /> <i>·</i> your campus, decoded</div>
+            <h1>Where do you belong <span>on campus?</span></h1>
+            <p>Choose your experience and let kyaScenehai! organize the campus chaos for you.</p>
           </div>
 
-          <p className="bottom-text">
-            One campus. Less chaos.
-          </p>
+          <div className="role-container" aria-label="Choose your kyaScenehai! experience">
+            <article className="role-card role-card-student">
+              <div className="role-card-topline"><span>01</span><span className="role-arrow">↗</span></div>
+              <div className="role-art role-art-student" aria-hidden="true">
+                <div className="role-art-glow" />
+                <div className="role-figure">🎓</div>
+                <span className="art-chip art-chip-one">✦</span>
+                <span className="art-chip art-chip-two">▦</span>
+              </div>
+              <div className="role-card-copy">
+                <p className="role-kicker">FOR THE CURIOUS</p>
+                <h2>Student</h2>
+                <p className="role-description">Discover what matters to you.</p>
+                <ul className="role-points">
+                  <li>Events &amp; workshops</li>
+                  <li>Competitions &amp; hackathons</li>
+                  <li>Deadlines &amp; announcements</li>
+                  <li>Personalized opportunities</li>
+                </ul>
+              </div>
+              <button onClick={() => setPage("student-login")}>
+                Enter my student space <span>→</span>
+              </button>
+            </article>
 
+            <article className="role-card role-card-organization">
+              <div className="role-card-topline"><span>02</span><span className="role-arrow">↗</span></div>
+              <div className="role-art role-art-organization" aria-hidden="true">
+                <div className="role-art-glow" />
+                <div className="role-figure">🏛️</div>
+                <span className="art-chip art-chip-one">♧</span>
+                <span className="art-chip art-chip-two">✦</span>
+              </div>
+              <div className="role-card-copy">
+                <p className="role-kicker">FOR THE CONNECTORS</p>
+                <h2>Organization</h2>
+                <p className="role-description">Bring your campus community together.</p>
+                <ul className="role-points">
+                  <li>Create events</li>
+                  <li>Reach students</li>
+                  <li>Share announcements</li>
+                  <li>Manage registrations</li>
+                </ul>
+              </div>
+              <button onClick={() => { window.location.href = "/organization-setup.html"; }}>
+                Enter organization space <span>→</span>
+              </button>
+            </article>
+          </div>
+
+          <p className="bottom-text"><span>✦</span> One campus. Less chaos. <span>✦</span></p>
         </div>
       )}
 
-      {/* ================= STUDENT DEMO ONBOARDING (STEP 1) =================
-          Deliberately NOT a credential login: there is no password field and
-          nothing here is validated, stored or transmitted. The College ID box
-          is uncontrolled demo copy only — Continue just advances local state. */}
+      {/* ================= STUDENT ONBOARDING ================= */}
 
-      {!showIntro && page === "student-login" && (
-        <div className="onboarding-page">
-
-          <div className="onboarding-card">
-
-            <div className="onboarding-logo">
-              kya<span>Scene</span>
-            </div>
-
-            <p className="step-text">
-              STEP 1 OF 2
-            </p>
-
-            <h1>
-              Hey! Let’s get you set up 👋
-            </h1>
-
-            <p className="onboarding-subtitle">
-              Just a couple of things before you dive into kyaScene.
-            </p>
-
-            <div className="input-group">
-
-              <label>
-                College ID
-                <span> (demo only)</span>
-              </label>
-
-              <input
-                type="text"
-                placeholder="Anything works — this is a demo"
-              />
-
-              <small>
-                Demo onboarding only ✨ Nothing is checked, saved or sent anywhere.
-              </small>
-
-            </div>
-
-            <button
-              className="onboarding-button"
-              onClick={() => setPage("interests")}
-            >
-              Continue →
-            </button>
-
-            <button
-              className="back-button"
-              onClick={() => setPage("landing")}
-            >
-              ← Back
-            </button>
-
-          </div>
-
-        </div>
-      )}
-
-      {/* ================= INTERESTS ================= */}
-
-      {!showIntro && page === "interests" && (
-        <div className="onboarding-page">
-
-          <div className="onboarding-card interests-card">
-
-            <div className="onboarding-logo">
-              kya<span>Scene</span>
-            </div>
-
-            <p className="step-text">
-              STEP 2 OF 2
-            </p>
-
-            <h1>
-              Okay, what are you into? 👀
-            </h1>
-
-            <p className="onboarding-subtitle">
-              Pick whatever sounds like you. You can always change it later.
-            </p>
-
-            <div className="year-select">
-
-              <p className="year-select-label">Your Year</p>
-
-              <div className="year-options" role="group" aria-label="Your Year">
-                {YEAR_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={`year-chip ${
-                      studentYear === option.value ? "selected" : ""
-                    }`}
-                    aria-pressed={studentYear === option.value}
-                    onClick={() => setStudentYear(option.value)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
+      {!showIntro && (page === "student-login" || page === "interests") && (
+        <div className="student-onboarding-page">
+          <div className="student-onboarding-shell">
+            <div className="student-progress" aria-label={`Onboarding step ${page === "interests" ? 2 : studentStep} of 2`}>
+              <div className={studentStep === 2 || page === "interests" ? "progress-step complete" : "progress-step active"}>
+                <span>{studentStep === 2 || page === "interests" ? "✓" : "01"}</span>
+                <strong>Personal Details</strong>
               </div>
-
-              <p className="year-select-note">
-                {careerVisible
-                  ? `Career Radar will show roles matched to ${yearLabelOf(studentYear)}.`
-                  : "💼 Career Radar unlocks from 2nd Year — everything else is open to you today."}
-              </p>
-
+              <div className="progress-line" />
+              <div className={studentStep === 2 || page === "interests" ? "progress-step active" : "progress-step"}>
+                <span>02</span>
+                <strong>Your Interests</strong>
+              </div>
             </div>
 
-            <div className="interest-grid">
+            <div className={`student-onboarding-viewport step-${studentStep === 2 || page === "interests" ? 2 : 1}`}>
+              <div className="student-onboarding-track">
+                <section className="student-panel student-panel-details" aria-hidden={studentStep !== 1 && page !== "interests"}>
+                  <div className="student-panel-orb" aria-hidden="true" />
+                  <div className="onboarding-logo"><ProductBrand /></div>
+                  <p className="step-text">STEP 1 OF 2</p>
+                  <h1>Hey, let’s get you set up 👋</h1>
+                  <p className="onboarding-subtitle">Tell us a little about yourself so kyaScenehai! can personalize your campus experience.</p>
+                  <form onSubmit={(event) => { event.preventDefault(); setStudentStep(2); }}>
+                    <div className="input-group">
+                      <label htmlFor="student-name">What should we call you?</label>
+                      <input id="student-name" type="text" value={studentName} onChange={(event) => setStudentName(event.target.value)} placeholder="Enter your name" required />
+                    </div>
+                    <div className="input-group">
+                      <label htmlFor="college-id">College ID</label>
+                      <input id="college-id" type="text" value={collegeId} onChange={(event) => setCollegeId(event.target.value)} placeholder="Enter your college ID" required />
+                      <small>Demo onboarding only ✨ Nothing is checked, saved or sent anywhere.</small>
+                    </div>
+                    <button className="onboarding-button" type="submit">Continue <span>→</span></button>
+                  </form>
+                  <button className="back-button" type="button" onClick={() => setPage("landing")}>← Back</button>
+                  <div className="panel-done" aria-hidden="true"><span>✓</span> Done</div>
+                </section>
 
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("Hackathons")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("Hackathons")}
-              >
-                💻 Hackathons
-              </button>
-
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("AI / ML")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("AI / ML")}
-              >
-                🤖 AI / ML
-              </button>
-
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("Cybersecurity")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("Cybersecurity")}
-              >
-                🔐 Cybersecurity
-              </button>
-
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("Design")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("Design")}
-              >
-                🎨 Design
-              </button>
-
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("Competitions")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("Competitions")}
-              >
-                🏆 Competitions
-              </button>
-
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("Internships")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("Internships")}
-              >
-                💼 Internships
-              </button>
-
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("Clubs & Societies")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("Clubs & Societies")}
-              >
-                📢 Clubs & Societies
-              </button>
-
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("Events")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("Events")}
-              >
-                🎤 Events
-              </button>
-
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("Academics")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("Academics")}
-              >
-                📚 Academics
-              </button>
-
-              <button
-                className={`interest-chip ${
-                  selectedInterests.includes("Volunteering")
-                    ? "selected"
-                    : ""
-                }`}
-                onClick={() => toggleInterest("Volunteering")}
-              >
-                🌱 Volunteering
-              </button>
-
+                <section className="student-panel student-panel-interests" aria-hidden={studentStep !== 2 && page !== "interests"}>
+                  <div className="student-panel-orb" aria-hidden="true" />
+                  <div className="onboarding-logo"><ProductBrand /></div>
+                  <p className="step-text">STEP 2 OF 2</p>
+                  <h1>Now, enhance your experience ✨</h1>
+                  <p className="onboarding-subtitle">Tell us what you’re interested in so we can surface the things that matter to you.</p>
+                  <div className="year-select">
+                    <p className="year-select-label">Your Year</p>
+                    <div className="year-options" role="group" aria-label="Your Year">
+                      {YEAR_OPTIONS.map((option) => (
+                        <button key={option.value} type="button" className={`year-chip ${studentYear === option.value ? "selected" : ""}`} aria-pressed={studentYear === option.value} onClick={() => setStudentYear(option.value)}>{option.label}</button>
+                      ))}
+                    </div>
+                    <p className="year-select-note">{studentYear ? (studentYear === 1 ? "Start exploring your campus experience ✨" : "Start exploring your campus experience + Career Radar ✨") : "Choose your year to personalize your campus experience."}</p>
+                  </div>
+                  <div className="interest-heading"><p>What are you interested in?</p><span>{selectedInterests.length} selected</span></div>
+                  <div className="interest-grid student-interest-grid">
+                    {[
+                      ["Coding", "💻"], ["AI / ML", "🤖"], ["Web Development", "🌐"], ["Hackathons", "🏆"],
+                      ["Design", "🎨"], ["Entrepreneurship", "🚀"], ["Data Science", "📊"], ["Cybersecurity", "🔐"],
+                      ["Public Speaking", "🎤"], ["Academics", "📚"], ["Cultural Activities", "🎭"], ["Sports", "🏅"],
+                    ].map(([interest, icon]) => (
+                      <button key={interest} type="button" className={`interest-chip ${selectedInterests.includes(interest) ? "selected" : ""}`} aria-pressed={selectedInterests.includes(interest)} onClick={() => toggleInterest(interest)}><span>{icon}</span>{interest}<b>✓</b></button>
+                    ))}
+                  </div>
+                  <button className="onboarding-button" type="button" disabled={!studentYear} onClick={() => setPage("student-home")}>Build my scene <span>→</span></button>
+                  <button className="back-button" type="button" onClick={() => { setPage("student-login"); setStudentStep(1); }}>← Back to personal details</button>
+                </section>
+              </div>
             </div>
-
-            <button
-              className="onboarding-button"
-              onClick={() => setPage("student-home")}
-            >
-              Build my kyaScene →
-            </button>
-
-            <button
-              className="back-button"
-              onClick={() => setPage("student-login")}
-            >
-              ← Back
-            </button>
-
           </div>
-
         </div>
       )}
 
@@ -1403,7 +1346,7 @@ function App() {
 
             <div>
               <p className="home-greeting">
-                Good morning, Student 👋
+                Hi, {studentName || "Student"} 👋
               </p>
 
               <h1>
@@ -1635,53 +1578,7 @@ function App() {
 
           {/* BOTTOM NAVIGATION */}
 
-          <nav className="bottom-nav">
-
-            <button
-              className={`nav-item ${
-                page === "student-home" ? "active" : ""
-              }`}
-              onClick={() => setPage("student-home")}
-            >
-              <span>⌂</span>
-              <small>Home</small>
-            </button>
-
-            <button
-              className={`nav-item ${
-                page === "explore" ? "active" : ""
-              }`}
-              onClick={() => setPage("explore")}
-            >
-              <span>⌕</span>
-              <small>Explore</small>
-            </button>
-
-            <button
-              className="nav-item ai-nav"
-              onClick={() => setPage("ai")}
-            >
-              <span>✦</span>
-              <small>AI</small>
-            </button>
-
-            <button
-              className="nav-item"
-              onClick={() => setPage("calendar")}
-            >
-              <span>▣</span>
-              <small>Calendar</small>
-            </button>
-
-            <button
-              className="nav-item"
-              onClick={() => setPage("profile")}
-            >
-              <span>♙</span>
-              <small>Profile</small>
-            </button>
-
-          </nav>
+          
 
         </div>
       )}
@@ -1719,7 +1616,7 @@ function App() {
             <div className="career-locked">
               <h3>Career Radar unlocks from 2nd Year</h3>
               <p>
-                You&rsquo;re in {yearLabelOf(studentYear)} — for now, kyaScene
+                You&rsquo;re in {yearLabelOf(studentYear)} — for now, kyaScenehai!
                 keeps you on clubs, workshops and build-ups. Careers content
                 opens automatically from your second year.
               </p>
@@ -1854,59 +1751,13 @@ function App() {
 
               <p className="career-demo-note">
                 Prototype demo content — these are placeholder listings for
-                the kyaScene UI, not real live openings.
+                the kyaScenehai! UI, not real live openings.
               </p>
             </>
 
           )}
 
-          <nav className="bottom-nav">
-
-            <button
-              className={`nav-item ${
-                page === "student-home" ? "active" : ""
-              }`}
-              onClick={() => setPage("student-home")}
-            >
-              <span>⌂</span>
-              <small>Home</small>
-            </button>
-
-            <button
-              className={`nav-item ${
-                page === "explore" ? "active" : ""
-              }`}
-              onClick={() => setPage("explore")}
-            >
-              <span>⌕</span>
-              <small>Explore</small>
-            </button>
-
-            <button
-              className="nav-item ai-nav"
-              onClick={() => setPage("ai")}
-            >
-              <span>✦</span>
-              <small>AI</small>
-            </button>
-
-            <button
-              className="nav-item"
-              onClick={() => setPage("calendar")}
-            >
-              <span>▣</span>
-              <small>Calendar</small>
-            </button>
-
-            <button
-              className="nav-item"
-              onClick={() => setPage("profile")}
-            >
-              <span>♙</span>
-              <small>Profile</small>
-            </button>
-
-          </nav>
+          
 
         </div>
       )}
@@ -2036,53 +1887,7 @@ function App() {
             Demo board for the prototype — task states reset on reload.
           </p>
 
-          <nav className="bottom-nav">
-
-            <button
-              className={`nav-item ${
-                page === "student-home" ? "active" : ""
-              }`}
-              onClick={() => setPage("student-home")}
-            >
-              <span>⌂</span>
-              <small>Home</small>
-            </button>
-
-            <button
-              className={`nav-item ${
-                page === "explore" ? "active" : ""
-              }`}
-              onClick={() => setPage("explore")}
-            >
-              <span>⌕</span>
-              <small>Explore</small>
-            </button>
-
-            <button
-              className="nav-item ai-nav"
-              onClick={() => setPage("ai")}
-            >
-              <span>✦</span>
-              <small>AI</small>
-            </button>
-
-            <button
-              className="nav-item"
-              onClick={() => setPage("calendar")}
-            >
-              <span>▣</span>
-              <small>Calendar</small>
-            </button>
-
-            <button
-              className="nav-item"
-              onClick={() => setPage("profile")}
-            >
-              <span>♙</span>
-              <small>Profile</small>
-            </button>
-
-          </nav>
+          
 
         </div>
       )}
@@ -2658,61 +2463,7 @@ function App() {
 
     {/* ================= BOTTOM NAVIGATION ================= */}
 
-    <nav className="bottom-nav">
-
-      <button
-        className={`nav-item ${
-          page === "student-home"
-            ? "active"
-            : ""
-        }`}
-        onClick={() => setPage("student-home")}
-      >
-        <span>⌂</span>
-        <small>Home</small>
-      </button>
-
-
-      <button
-        className={`nav-item ${
-          page === "explore"
-            ? "active"
-            : ""
-        }`}
-        onClick={() => setPage("explore")}
-      >
-        <span>⌕</span>
-        <small>Explore</small>
-      </button>
-
-
-      <button
-        className="nav-item ai-nav"
-        onClick={() => setPage("ai")}
-      >
-        <span>✦</span>
-        <small>AI</small>
-      </button>
-
-
-      <button
-        className="nav-item"
-        onClick={() => setPage("calendar")}
-      >
-        <span>▣</span>
-        <small>Calendar</small>
-      </button>
-
-
-      <button
-        className="nav-item"
-        onClick={() => setPage("profile")}
-      >
-        <span>♙</span>
-        <small>Profile</small>
-      </button>
-
-     </nav>
+    
   </div>
 )}
 
@@ -3017,59 +2768,7 @@ function App() {
 
     {/* BOTTOM NAVIGATION */}
 
-    <nav className="bottom-nav">
-
-      <button
-        className={`nav-item ${
-          page === "student-home" ? "active" : ""
-        }`}
-        onClick={() => setPage("student-home")}
-      >
-        <span>⌂</span>
-        <small>Home</small>
-      </button>
-
-
-      <button
-        className={`nav-item ${
-          page === "explore" ? "active" : ""
-        }`}
-        onClick={() => setPage("explore")}
-      >
-        <span>⌕</span>
-        <small>Explore</small>
-      </button>
-
-
-      <button
-        className="nav-item ai-nav"
-        onClick={() => setPage("ai")}
-      >
-        <span>✦</span>
-        <small>AI</small>
-      </button>
-
-
-      <button
-        className={`nav-item ${
-          page === "calendar" ? "active" : ""
-        }`}
-        onClick={() => setPage("calendar")}
-      >
-        <span>▣</span>
-        <small>Calendar</small>
-      </button>
-
-
-      <button
-        className="nav-item"
-        onClick={() => setPage("profile")}
-      >
-        <span>♙</span>
-        <small>Profile</small>
-      </button>
-
-    </nav>
+    
 
    </div>
 )}
@@ -3083,7 +2782,7 @@ function App() {
 
       <div>
         <p className="eyebrow">
-          ✦ KYASCENE AI
+          ✦ kyaScenehai! AI
         </p>
 
         <h1>
@@ -3175,7 +2874,7 @@ function App() {
 
         <input
           type="text"
-          placeholder="Ask kyaScene AI…"
+          placeholder="Ask kyaScenehai! AI…"
           value={aiInput}
           onChange={(event) => setAiInput(event.target.value)}
           onKeyDown={(event) => {
@@ -3205,59 +2904,7 @@ function App() {
 
     {/* BOTTOM NAVIGATION */}
 
-    <nav className="bottom-nav">
-
-      <button
-        className={`nav-item ${
-          page === "student-home" ? "active" : ""
-        }`}
-        onClick={() => setPage("student-home")}
-      >
-        <span>⌂</span>
-        <small>Home</small>
-      </button>
-
-      <button
-        className={`nav-item ${
-          page === "explore" ? "active" : ""
-        }`}
-        onClick={() => setPage("explore")}
-      >
-        <span>⌕</span>
-        <small>Explore</small>
-      </button>
-
-      <button
-        className={`nav-item ai-nav ${
-          page === "ai" ? "active" : ""
-        }`}
-        onClick={() => setPage("ai")}
-      >
-        <span>✦</span>
-        <small>AI</small>
-      </button>
-
-      <button
-        className={`nav-item ${
-          page === "calendar" ? "active" : ""
-        }`}
-        onClick={() => setPage("calendar")}
-      >
-        <span>▣</span>
-        <small>Calendar</small>
-      </button>
-
-      <button
-        className={`nav-item ${
-          page === "profile" ? "active" : ""
-        }`}
-        onClick={() => setPage("profile")}
-      >
-        <span>♙</span>
-        <small>Profile</small>
-      </button>
-
-    </nav>
+    
 
   </div>
 )}
@@ -3366,7 +3013,7 @@ function App() {
       ) : (
 
         <p className="profile-empty">
-          No interests picked yet — tap “Edit →” and build your kyaScene. ✨
+          No interests picked yet — tap “Edit →” and build your kyaScenehai!. ✨
         </p>
 
       )}
@@ -3507,59 +3154,7 @@ function App() {
 
     {/* BOTTOM NAVIGATION */}
 
-    <nav className="bottom-nav">
-
-      <button
-        className={`nav-item ${
-          page === "student-home" ? "active" : ""
-        }`}
-        onClick={() => setPage("student-home")}
-      >
-        <span>⌂</span>
-        <small>Home</small>
-      </button>
-
-      <button
-        className={`nav-item ${
-          page === "explore" ? "active" : ""
-        }`}
-        onClick={() => setPage("explore")}
-      >
-        <span>⌕</span>
-        <small>Explore</small>
-      </button>
-
-      <button
-        className={`nav-item ai-nav ${
-          page === "ai" ? "active" : ""
-        }`}
-        onClick={() => setPage("ai")}
-      >
-        <span>✦</span>
-        <small>AI</small>
-      </button>
-
-      <button
-        className={`nav-item ${
-          page === "calendar" ? "active" : ""
-        }`}
-        onClick={() => setPage("calendar")}
-      >
-        <span>▣</span>
-        <small>Calendar</small>
-      </button>
-
-      <button
-        className={`nav-item ${
-          page === "profile" ? "active" : ""
-        }`}
-        onClick={() => setPage("profile")}
-      >
-        <span>♙</span>
-        <small>Profile</small>
-      </button>
-
-    </nav>
+    
 
   </div>
 )}
